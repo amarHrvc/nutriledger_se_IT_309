@@ -17,9 +17,9 @@ import '@/app/globals.css'
 import '@assets/iconify-icons/generated-icons.css'
 
 export const metadata = {
-  title: 'Vuexy - MUI Next.js Admin Dashboard Template',
+  title: 'Nutri-ledger - Patient Management System',
   description:
-    'Vuexy - MUI Next.js Admin Dashboard Template - is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.'
+    'Nutri-ledger - A comprehensive patient management system for healthcare professionals to manage patient records, visits, and nutritional data.'
 }
 
 const RootLayout = async (props: ChildrenType) => {
