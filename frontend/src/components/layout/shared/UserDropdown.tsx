@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import type { MouseEvent } from 'react'
 
 // Next Imports
@@ -24,6 +24,8 @@ import Button from '@mui/material/Button'
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 
+import { client } from '@/api/client'
+
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
   width: 8,
@@ -37,6 +39,7 @@ const BadgeContentSpan = styled('span')({
 const UserDropdown = () => {
   // States
   const [open, setOpen] = useState(false)
+  const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null)
 
   // Refs
   const anchorRef = useRef<HTMLDivElement>(null)
@@ -45,6 +48,32 @@ const UserDropdown = () => {
   const router = useRouter()
 
   const { settings } = useSettings()
+
+  // Load user from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser)
+        setUser({
+          name: userData.attributes?.name || 'User',
+          email: userData.attributes?.email || '',
+          role: userData.attributes?.role || ''
+        })
+      } catch (err) {
+        console.error('Failed to parse user data:', err)
+      }
+    }
+  }, [])
+
+  // Get user initials from name
+  const getUserInitials = (name: string) => {
+    return name
+      .split(' ')
+      .slice(0, 2)
+      .map(word => word.charAt(0).toUpperCase())
+      .join('')
+  }
 
   const handleDropdownOpen = () => {
     !open ? setOpen(true) : setOpen(false)
@@ -63,8 +92,17 @@ const UserDropdown = () => {
   }
 
   const handleUserLogout = async () => {
-    // Redirect to login page
-    router.push('/login')
+    try {
+      await client.post('api/logout', {})
+    } catch (err) {
+      // Log the error but don't block logout - token might already be invalid/expired
+      console.warn('Logout API call failed:', err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      // Always clear local storage and redirect, even if API call fails
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      router.replace('/login')
+    }
   }
 
   return (
@@ -78,11 +116,12 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt='John Doe'
-          src='/images/avatars/1.png'
+          alt={user?.name || 'User'}
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
-        />
+        >
+          {user?.name ? getUserInitials(user.name) : 'U'}
+        </Avatar>
       </Badge>
       <Popper
         open={open}
@@ -103,12 +142,14 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e as MouseEvent | TouchEvent)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-6 gap-2' tabIndex={-1}>
-                    <Avatar alt='John Doe' src='/images/avatars/1.png' />
+                    <Avatar alt={user?.name || 'User'}>
+                      {user?.name ? getUserInitials(user.name) : 'U'}
+                    </Avatar>
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        John Doe
+                        {user?.name || 'User'}
                       </Typography>
-                      <Typography variant='caption'>admin@vuexy.com</Typography>
+                      <Typography variant='caption'>{user?.email || ''}</Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />
@@ -120,14 +161,14 @@ const UserDropdown = () => {
                     <i className='tabler-settings' />
                     <Typography color='text.primary'>Settings</Typography>
                   </MenuItem>
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
+                  {/* <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='tabler-currency-dollar' />
                     <Typography color='text.primary'>Pricing</Typography>
                   </MenuItem>
                   <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='tabler-help-circle' />
                     <Typography color='text.primary'>FAQ</Typography>
-                  </MenuItem>
+                  </MenuItem> */}
                   <div className='flex items-center plb-2 pli-3'>
                     <Button
                       fullWidth
