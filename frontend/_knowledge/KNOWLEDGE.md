@@ -14,6 +14,7 @@
 - [07-state-data.md](07-state-data.md) — Redux slices, API routes, fake-db, Prisma
 - [08-components.md](08-components.md) — Core components, UI library, key hooks
 - [09-i18n.md](09-i18n.md) — Internationalization, locales, RTL, dictionaries
+- [10-backend-api.md](10-backend-api.md) — Laravel backend API endpoints, data structures, authentication
 
 ## Quick Reference
 
@@ -27,3 +28,4 @@
 | Find an existing page to copy     | 06-page-map.md      |
 | Use a core component/hook         | 08-components.md    |
 | Add a new language                | 09-i18n.md          |
+| Understand backend API endpoints  | 10-backend-api.md   |

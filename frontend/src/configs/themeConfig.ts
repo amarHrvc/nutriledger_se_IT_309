@@ -50,9 +50,9 @@ export type Config = {
 }
 
 const themeConfig: Config = {
-  templateName: 'Vuexy',
+  templateName: 'Nutri-ledger',
   homePageUrl: '/home',
-  settingsCookieName: 'vuexy-mui-next-demo-1',
+  settingsCookieName: 'nutri-ledger-settings',
   mode: 'system', // 'system', 'light', 'dark'
   skin: 'default', // 'default', 'bordered'
   semiDark: false, // true, false
