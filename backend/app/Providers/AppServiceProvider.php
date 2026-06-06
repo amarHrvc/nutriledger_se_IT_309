@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Patient;
+use App\Observers\PatientObserver;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -16,6 +18,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Patient::observe(PatientObserver::class);
+
         RateLimiter::for('login', fn ($r) => Limit::perMinute(5)->by($r->ip()));
 
         Scramble::routes(function (Route $route): bool {
