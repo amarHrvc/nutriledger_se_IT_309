@@ -4,16 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0d19696e-ccce-412c-98cb-f7393b2031c8" name="Changes" comment="fe-visit new and edit">
+    <list default="true" id="0d19696e-ccce-412c-98cb-f7393b2031c8" name="Changes" comment="fe-visit orval generated client">
       <change beforePath="$PROJECT_DIR$/../backend/database/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/database/database.sqlite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/orval.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/orval.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/auth/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/auth/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/default/default.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/default/default.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/nutriBaseAPI.schemas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/nutriBaseAPI.schemas.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/patient/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/patient/patient.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/user/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/user/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/visit/visit.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/visit/visit.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,7 +186,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780741484361</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fe-visit orval generated client">
+      <option name="closed" value="true" />
+      <created>1780743538539</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1780743538539</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -220,7 +220,8 @@
     <MESSAGE value="T009 Create frontend/orval.config.ts" />
     <MESSAGE value="fe -  components added" />
     <MESSAGE value="fe-visit new and edit" />
-    <option name="LAST_COMMIT_MESSAGE" value="fe-visit new and edit" />
+    <MESSAGE value="fe-visit orval generated client" />
+    <option name="LAST_COMMIT_MESSAGE" value="fe-visit orval generated client" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
