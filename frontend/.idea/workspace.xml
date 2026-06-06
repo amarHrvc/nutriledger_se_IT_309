@@ -4,18 +4,39 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0d19696e-ccce-412c-98cb-f7393b2031c8" name="Changes" comment="T009 Create frontend/orval.config.ts">
-      <change afterPath="$PROJECT_DIR$/src/api/generated/auth/auth.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/default/default.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/nutriBaseAPI.schemas.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/user/user.ts" afterDir="false" />
+    <list default="true" id="0d19696e-ccce-412c-98cb-f7393b2031c8" name="Changes" comment="fe -  components added">
+      <change afterPath="$PROJECT_DIR$/src/api/generated/patient/patient.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/generated/visit/visit.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/dashboard/about/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/dashboard/home/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/dashboard/profile/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/visits/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/visits/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/api/auth/login/route.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/api/auth/logout/route.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/api/auth/me/route.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/api/dashboard/stats/route.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/api/profile/me/route.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/api/visits/route.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/views/patients/patient-left/PatientDetailsCard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/views/visits/VisitDetail.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/views/visits/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../backend/database/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/database/database.sqlite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/public/build/assets/app-BuG9aa18.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/public/build/assets/app-ZEuA-1GE.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/public/build/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/public/build/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_04_2026_23_50_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_04_2026_23_50__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/generated/auth/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/auth/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/generated/default/default.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/default/default.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/generated/nutriBaseAPI.schemas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/nutriBaseAPI.schemas.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/generated/user/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/user/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(blank-layout-pages)/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(blank-layout-pages)/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(blank-layout-pages)/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(blank-layout-pages)/login/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(dashboard)/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(dashboard)/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[...not-found]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[...not-found]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +62,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="be_visits" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectColorInfo">{
@@ -56,11 +82,15 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "git-widget-placeholder": "004__Scramble__Docs",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "fe__visits",
     "ignore.virus.scanning.warn.message": "true",
+    "javascript.preferred.runtime.type.id": "node",
     "js.debugger.nextJs.config.created.client": "true",
     "js.debugger.nextJs.config.created.server": "true",
-    "last_opened_file_path": "D:/_Learn/_PhpstormProjects/nutri-ledger/frontend/src/app/(dashboard)",
+    "last_opened_file_path": "D:/_Learn/_PhpstormProjects/nutriledger_se_IT_309/frontend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.stylelint": "true",
     "node.js.detected.package.tslint": "true",
@@ -68,13 +98,14 @@
     "node.js.selected.package.stylelint": "D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\stylelint",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "pnpm",
-    "prettierjs.PrettierConfiguration.Package": "D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\prettier",
-    "ts.external.directory.path": "D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\typescript\\lib",
+    "prettierjs.PrettierConfiguration.Package": "D:\\_Learn\\_PhpstormProjects\\nutriledger_se_IT_309\\frontend\\node_modules\\prettier",
+    "ts.external.directory.path": "D:\\_Learn\\_PhpstormProjects\\nutriledger_se_IT_309\\frontend\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\_Learn\_PhpstormProjects\nutriledger_se_IT_309\frontend" />
       <recent name="D:\_Learn\_PhpstormProjects\nutri-ledger\frontend\src\app\(dashboard)" />
       <recent name="D:\_Learn\_PhpstormProjects\nutri-ledger\frontend" />
     </key>
@@ -100,7 +131,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.26830.93" />
+        <option value="bundled-js-predefined-d6986cc7102b-3bd3a6803838-JavaScript-WS-261.22158.274" />
       </set>
     </attachedChunks>
   </component>
@@ -112,6 +143,7 @@
       <option name="presentableId" value="Default" />
       <updated>1775342136854</updated>
       <workItem from="1775342137775" duration="4584000" />
+      <workItem from="1780737034548" duration="2810000" />
     </task>
     <task id="LOCAL-00001" summary="T014: Scaffold Next.js + TypeScript project">
       <option name="closed" value="true" />
@@ -161,7 +193,23 @@
       <option name="project" value="LOCAL" />
       <updated>1775776220427</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fe -  components added">
+      <option name="closed" value="true" />
+      <created>1780739776251</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1780739776251</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fe -  components added">
+      <option name="closed" value="true" />
+      <created>1780739784579</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1780739784579</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -185,7 +233,8 @@
     <MESSAGE value="009 Create frontend/orval.config.ts" />
     <MESSAGE value="T017: Configure .env.local and .env.example" />
     <MESSAGE value="T009 Create frontend/orval.config.ts" />
-    <option name="LAST_COMMIT_MESSAGE" value="T009 Create frontend/orval.config.ts" />
+    <MESSAGE value="fe -  components added" />
+    <option name="LAST_COMMIT_MESSAGE" value="fe -  components added" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
