@@ -4,39 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0d19696e-ccce-412c-98cb-f7393b2031c8" name="Changes" comment="fe -  components added">
-      <change afterPath="$PROJECT_DIR$/src/api/generated/patient/patient.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/visit/visit.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/dashboard/about/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/dashboard/home/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/dashboard/profile/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/visits/[id]/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(dashboard)/visits/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/api/auth/login/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/api/auth/logout/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/api/auth/me/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/api/dashboard/stats/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/api/profile/me/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/api/visits/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/patients/patient-left/PatientDetailsCard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/visits/VisitDetail.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/views/visits/index.tsx" afterDir="false" />
+    <list default="true" id="0d19696e-ccce-412c-98cb-f7393b2031c8" name="Changes" comment="fe-visit new and edit">
       <change beforePath="$PROJECT_DIR$/../backend/database/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/database/database.sqlite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_04_2026_23_50_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_09_04_2026_23_50__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/orval.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/orval.config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/api/generated/auth/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/auth/auth.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/api/generated/default/default.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/default/default.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/api/generated/nutriBaseAPI.schemas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/nutriBaseAPI.schemas.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/generated/patient/patient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/patient/patient.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/api/generated/user/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/user/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(blank-layout-pages)/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(blank-layout-pages)/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(blank-layout-pages)/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(blank-layout-pages)/login/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(dashboard)/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(dashboard)/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[...not-found]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[...not-found]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/generated/visit/visit.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/visit/visit.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,32 +54,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "fe__visits",
-    "ignore.virus.scanning.warn.message": "true",
-    "javascript.preferred.runtime.type.id": "node",
-    "js.debugger.nextJs.config.created.client": "true",
-    "js.debugger.nextJs.config.created.server": "true",
-    "last_opened_file_path": "D:/_Learn/_PhpstormProjects/nutriledger_se_IT_309/frontend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.stylelint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.stylelint": "D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\stylelint",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "pnpm",
-    "prettierjs.PrettierConfiguration.Package": "D:\\_Learn\\_PhpstormProjects\\nutriledger_se_IT_309\\frontend\\node_modules\\prettier",
-    "ts.external.directory.path": "D:\\_Learn\\_PhpstormProjects\\nutriledger_se_IT_309\\frontend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fe__visits&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;js.debugger.nextJs.config.created.client&quot;: &quot;true&quot;,
+    &quot;js.debugger.nextJs.config.created.server&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/_Learn/_PhpstormProjects/nutriledger_se_IT_309/frontend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.stylelint&quot;: &quot;D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\stylelint&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;D:\\_Learn\\_PhpstormProjects\\nutriledger_se_IT_309\\frontend\\node_modules\\prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\_Learn\\_PhpstormProjects\\nutriledger_se_IT_309\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\_Learn\_PhpstormProjects\nutriledger_se_IT_309\frontend" />
@@ -209,7 +186,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780739784579</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fe-visit new and edit">
+      <option name="closed" value="true" />
+      <created>1780741484361</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1780741484361</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -234,7 +219,8 @@
     <MESSAGE value="T017: Configure .env.local and .env.example" />
     <MESSAGE value="T009 Create frontend/orval.config.ts" />
     <MESSAGE value="fe -  components added" />
-    <option name="LAST_COMMIT_MESSAGE" value="fe -  components added" />
+    <MESSAGE value="fe-visit new and edit" />
+    <option name="LAST_COMMIT_MESSAGE" value="fe-visit new and edit" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

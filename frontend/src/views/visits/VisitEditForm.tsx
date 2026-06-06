@@ -10,7 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 
-import { client, ApiError } from '@/api/client'
+import { patientsVisitsUpdate } from '@/api/generated/visit/visit'
 import type { VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
 
 interface Props {
@@ -48,17 +48,20 @@ export default function VisitEditForm({ visit, patientId, onSuccess, onCancel }:
 				notes,
 			}
 
-			await client.put(`api/patients/${patientId}/visits/${visit.id}`, payload)
+			const res = await patientsVisitsUpdate(Number(patientId), Number(visit.id), { date, notes: notes || null })
+			if (res.status === 422) {
+				setErrors((res.data as any)?.errors ?? {})
+				return
+			}
+			if (res.status !== 200) {
+				setFormError((res.data as any)?.message ?? `Server error ${res.status}`)
+				return
+			}
 			window.dispatchEvent(new CustomEvent('visits:changed'))
 			toast.success('Visit updated successfully.')
 			onSuccess?.()
-		} catch (err) {
-			if (err instanceof ApiError) {
-				if (err.payload?.errors) setErrors(err.payload.errors)
-				else setFormError(err.message)
-			} else {
-				setFormError('Failed to update visit.')
-			}
+		} catch {
+			setFormError('Failed to update visit.')
 		} finally {
 			setLoading(false)
 		}

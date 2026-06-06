@@ -6,13 +6,11 @@ import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 
-import { client, ApiError } from '@/api/client'
+import { patientsShow } from '@/api/generated/patient/patient'
+import { patientsVisitsShow } from '@/api/generated/visit/visit'
 import VisitDetail from '@views/visits/VisitDetail'
 import PatientDetailsCard from '@views/patients/patient-left/PatientDetailsCard'
 import type { PatientResource, VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
-
-type PatientShowResponse = { message: string; status: number; data: { patient: PatientResource } }
-type VisitShowResponse = { message: string; status: number; data: { visit: VisitResource } }
 
 export default function Page() {
   const { id } = useParams<{ id: string }>()
@@ -24,24 +22,21 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null)
 
   const loadVisit = useCallback(async () => {
-    if (!patientId) {
-      setError('Missing patient context.')
-      return
-    }
+    if (!patientId) { setError('Missing patient context.'); return }
     try {
-      const res = await client.get<VisitShowResponse>(`api/patients/${patientId}/visits/${id}`)
-      setVisit(res.data.visit)
+      const res = await patientsVisitsShow(Number(patientId), Number(id))
+      if (res.status !== 200) { setError((res.data as any)?.message ?? 'Failed to load visit.'); return }
+      setVisit((res.data as any)?.data?.visit ?? null)
       setError(null)
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load visit.')
+    } catch {
+      setError('Failed to load visit.')
     }
   }, [id, patientId])
 
   useEffect(() => {
     if (!patientId) return
-    client
-      .get<PatientShowResponse>(`api/patients/${patientId}`)
-      .then(res => setPatient(res.data.patient))
+    patientsShow(Number(patientId))
+      .then(res => setPatient((res.data as any)?.data?.patient ?? null))
       .catch(() => null)
   }, [patientId])
 

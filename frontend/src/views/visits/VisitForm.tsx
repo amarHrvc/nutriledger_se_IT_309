@@ -13,10 +13,9 @@ import Select from '@mui/material/Select'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 
-import { client, ApiError } from '@/api/client'
+import { patientsIndex } from '@/api/generated/patient/patient'
+import { patientsVisitsStore } from '@/api/generated/visit/visit'
 import type { PatientResource } from '@/api/generated/nutriBaseAPI.schemas'
-
-type PatientListResponse = { message: string; status: number; data: PatientResource[] }
 
 interface Patient {
 	id: string
@@ -59,10 +58,10 @@ export default function VisitForm({ patientId, onSuccess, onCancel }: Props) {
 	useEffect(() => {
 		const fetchPatients = async () => {
 			try {
-				const res = await client.get<PatientListResponse>('api/patients')
-				setPatients(res.data ?? [])
-			} catch (err) {
-				setFormError(err instanceof ApiError ? err.message : 'Failed to load patients.')
+				const res = await patientsIndex()
+				setPatients(((res.data as any)?.data as PatientResource[]) ?? [])
+			} catch {
+				setFormError('Failed to load patients.')
 			} finally {
 				setPatientsLoading(false)
 			}
@@ -100,16 +99,19 @@ return
 			}
 
 
-			await client.post(`api/patients/${resolvedPatientId}/visits`, payload)
+			const res = await patientsVisitsStore(Number(resolvedPatientId), { date, notes: notes || null })
+			if (res.status === 422) {
+				setErrors((res.data as any)?.errors ?? {})
+				return
+			}
+			if (res.status !== 201) {
+				setFormError((res.data as any)?.message ?? `Server error ${res.status}`)
+				return
+			}
 			window.dispatchEvent(new CustomEvent('visits:changed'))
 			onSuccess?.()
-		} catch (err) {
-			if (err instanceof ApiError) {
-				if (err.payload?.errors) setErrors(err.payload.errors)
-				else setFormError(err.message)
-			} else {
-				setFormError('Failed to create visit.')
-			}
+		} catch {
+			setFormError('Failed to create visit.')
 		} finally {
 			setLoading(false)
 		}

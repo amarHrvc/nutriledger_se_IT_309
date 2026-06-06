@@ -23,23 +23,10 @@ import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
-import { client, ApiError } from '@/api/client'
+import { patientsIndex } from '@/api/generated/patient/patient'
+import { patientsVisitsIndex } from '@/api/generated/visit/visit'
 import type { PatientResource, VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
 import VisitForm from './VisitForm'
-
-type PatientListResponse = {
-  message: string
-  status: number
-  data: PatientResource[]
-  meta?: any
-}
-
-type VisitListResponse = {
-  message: string
-  status: number
-  data: VisitResource[]
-  meta?: any
-}
 
 type FlatVisit = {
   visit: VisitResource
@@ -56,14 +43,17 @@ export default function VisitsView() {
   const loadAllVisits = useCallback(async () => {
     try {
       setLoading(true)
-      const patientsRes = await client.get<PatientListResponse>('api/patients')
-      const patients = patientsRes.data ?? []
+
+      const patientsRes = await patientsIndex()
+      if (patientsRes.status !== 200) throw new Error('Failed to load patients')
+      const patients = ((patientsRes.data as any)?.data as PatientResource[]) ?? []
 
       const visitArrays = await Promise.all(
         patients.map(async patient => {
           try {
-            const visitsRes = await client.get<VisitListResponse>(`api/patients/${patient.id}/visits`)
-            return (visitsRes.data ?? []).map(visit => ({ visit, patient }))
+            const visitsRes = await patientsVisitsIndex(Number(patient.id))
+            const visits = ((visitsRes.data as any)?.data as VisitResource[]) ?? []
+            return visits.map(visit => ({ visit, patient }))
           } catch {
             return []
           }
@@ -77,7 +67,7 @@ export default function VisitsView() {
       setFlatVisits(all)
       setError(null)
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load visits.')
+      setError(err instanceof Error ? err.message : 'Failed to load visits.')
     } finally {
       setLoading(false)
     }
@@ -112,11 +102,7 @@ export default function VisitsView() {
           title='Visit History'
           subheader={`${flatVisits.length} visit${flatVisits.length !== 1 ? 's' : ''} total`}
           action={
-            <Button
-              variant='contained'
-              startIcon={<i className='tabler-plus' />}
-              onClick={() => setCreateOpen(true)}
-            >
+            <Button variant='contained' startIcon={<i className='tabler-plus' />} onClick={() => setCreateOpen(true)}>
               New Visit
             </Button>
           }
@@ -149,10 +135,7 @@ export default function VisitsView() {
                       </TableCell>
                       <TableCell align='right'>
                         <Tooltip title='View'>
-                          <IconButton
-                            size='small'
-                            onClick={() => router.push(`/visits/${visit.id}?patient=${patient.id}`)}
-                          >
+                          <IconButton size='small' onClick={() => router.push(`/visits/${visit.id}?patient=${patient.id}`)}>
                             <i className='tabler-eye' />
                           </IconButton>
                         </Tooltip>
