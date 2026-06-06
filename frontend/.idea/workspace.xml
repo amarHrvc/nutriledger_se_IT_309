@@ -4,18 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0d19696e-ccce-412c-98cb-f7393b2031c8" name="Changes" comment="T009 Create frontend/orval.config.ts">
-      <change afterPath="$PROJECT_DIR$/src/api/generated/auth/auth.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/default/default.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/nutriBaseAPI.schemas.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/user/user.ts" afterDir="false" />
+    <list default="true" id="0d19696e-ccce-412c-98cb-f7393b2031c8" name="Changes" comment="fe-visit orval generated client">
       <change beforePath="$PROJECT_DIR$/../backend/database/database.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/database/database.sqlite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/public/build/assets/app-BuG9aa18.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/public/build/assets/app-ZEuA-1GE.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/public/build/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/public/build/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +31,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="be_visits" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectColorInfo">{
@@ -51,30 +46,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "git-widget-placeholder": "004__Scramble__Docs",
-    "ignore.virus.scanning.warn.message": "true",
-    "js.debugger.nextJs.config.created.client": "true",
-    "js.debugger.nextJs.config.created.server": "true",
-    "last_opened_file_path": "D:/_Learn/_PhpstormProjects/nutri-ledger/frontend/src/app/(dashboard)",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.stylelint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.stylelint": "D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\stylelint",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "pnpm",
-    "prettierjs.PrettierConfiguration.Package": "D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\prettier",
-    "ts.external.directory.path": "D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fe__visits&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;js.debugger.nextJs.config.created.client&quot;: &quot;true&quot;,
+    &quot;js.debugger.nextJs.config.created.server&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/_Learn/_PhpstormProjects/nutriledger_se_IT_309/frontend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.stylelint&quot;: &quot;D:\\_Learn\\_PhpstormProjects\\nutri-ledger\\frontend\\node_modules\\stylelint&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;D:\\_Learn\\_PhpstormProjects\\nutriledger_se_IT_309\\frontend\\node_modules\\prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\_Learn\\_PhpstormProjects\\nutriledger_se_IT_309\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\_Learn\_PhpstormProjects\nutriledger_se_IT_309\frontend" />
       <recent name="D:\_Learn\_PhpstormProjects\nutri-ledger\frontend\src\app\(dashboard)" />
       <recent name="D:\_Learn\_PhpstormProjects\nutri-ledger\frontend" />
     </key>
@@ -100,7 +100,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.26830.93" />
+        <option value="bundled-js-predefined-d6986cc7102b-3bd3a6803838-JavaScript-WS-261.22158.274" />
       </set>
     </attachedChunks>
   </component>
@@ -112,6 +112,7 @@
       <option name="presentableId" value="Default" />
       <updated>1775342136854</updated>
       <workItem from="1775342137775" duration="4584000" />
+      <workItem from="1780737034548" duration="2810000" />
     </task>
     <task id="LOCAL-00001" summary="T014: Scaffold Next.js + TypeScript project">
       <option name="closed" value="true" />
@@ -161,7 +162,39 @@
       <option name="project" value="LOCAL" />
       <updated>1775776220427</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fe -  components added">
+      <option name="closed" value="true" />
+      <created>1780739776251</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1780739776251</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fe -  components added">
+      <option name="closed" value="true" />
+      <created>1780739784579</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1780739784579</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fe-visit new and edit">
+      <option name="closed" value="true" />
+      <created>1780741484361</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1780741484361</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fe-visit orval generated client">
+      <option name="closed" value="true" />
+      <created>1780743538539</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1780743538539</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -185,7 +218,10 @@
     <MESSAGE value="009 Create frontend/orval.config.ts" />
     <MESSAGE value="T017: Configure .env.local and .env.example" />
     <MESSAGE value="T009 Create frontend/orval.config.ts" />
-    <option name="LAST_COMMIT_MESSAGE" value="T009 Create frontend/orval.config.ts" />
+    <MESSAGE value="fe -  components added" />
+    <MESSAGE value="fe-visit new and edit" />
+    <MESSAGE value="fe-visit orval generated client" />
+    <option name="LAST_COMMIT_MESSAGE" value="fe-visit orval generated client" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
