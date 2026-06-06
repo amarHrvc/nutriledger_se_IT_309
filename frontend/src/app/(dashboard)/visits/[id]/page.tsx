@@ -62,7 +62,7 @@ export default function Page() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: 3 }}>
       {patient && <PatientDetailsCard patient={patient} />}
-      {!visit ? <CircularProgress /> : <VisitDetail visit={visit} onUpdated={loadVisit} />}
+      {!visit ? <CircularProgress /> : <VisitDetail visit={visit} patientId={patientId} onUpdated={loadVisit} />}
     </Box>
   )
 }
