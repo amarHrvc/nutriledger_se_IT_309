@@ -14,6 +14,7 @@ import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
+import PageBackButton from '@/components/PageBackButton'
 import PageLoader from '@/components/PageLoader'
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
@@ -147,15 +148,7 @@ export default function EditUserPage() {
     <Card>
       <CardHeader
         title='Edit User'
-        action={
-          <Button
-            variant='outlined'
-            startIcon={<i className='tabler-arrow-left' />}
-            onClick={() => router.push(`/users/${id}`)}
-          >
-            Back
-          </Button>
-        }
+        action={<PageBackButton onClick={() => router.push(`/users/${id}`)} />}
       />
       <Divider />
       <CardContent sx={{ pt: 4 }}>

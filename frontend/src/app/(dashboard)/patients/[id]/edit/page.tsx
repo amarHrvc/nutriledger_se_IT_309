@@ -14,6 +14,7 @@ import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
+import PageBackButton from '@/components/PageBackButton'
 import PageLoader from '@/components/PageLoader'
 import SocioeconomicFormFields from '@/components/SocioeconomicFormFields'
 import CustomTextField from '@core/components/mui/TextField'
@@ -156,11 +157,7 @@ export default function EditPatientPage() {
     <Card>
       <CardHeader
         title='Edit Patient'
-        action={
-          <Button variant='outlined' startIcon={<i className='tabler-arrow-left' />} onClick={() => router.push(`/patients/${id}`)}>
-            Back
-          </Button>
-        }
+        action={<PageBackButton onClick={() => router.push(`/patients/${id}`)} />}
       />
       <Divider />
       <CardContent sx={{ pt: 4 }}>

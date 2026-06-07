@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography'
 
 import CustomAvatar from '@core/components/mui/Avatar'
 import CustomTextField from '@core/components/mui/TextField'
+import PageBackButton from '@/components/PageBackButton'
 import PageLoader from '@/components/PageLoader'
 import { client, ApiError } from '@/api/client'
 import type { UserResource } from '@/api/generated/nutriBaseAPI.schemas'
@@ -120,6 +121,7 @@ export default function ProfilePage() {
                 <i className='tabler-user' />
               </CustomAvatar>
             }
+            action={<PageBackButton onClick={() => router.push('/home')} label='Back to Home' />}
           />
           <Divider />
           <CardContent>
@@ -221,9 +223,7 @@ export default function ProfilePage() {
                     >
                       {isSubmitting ? 'Updating...' : 'Update Password'}
                     </Button>
-                    <Button variant='tonal' color='secondary' onClick={() => router.push('/home')}>
-                      Back to Home
-                    </Button>
+                    <PageBackButton onClick={() => router.push('/home')} label='Back to Home' />
                   </Box>
                 </Grid>
               </Grid>

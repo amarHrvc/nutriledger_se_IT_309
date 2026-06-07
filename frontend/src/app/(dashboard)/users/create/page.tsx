@@ -13,6 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 
+import PageBackButton from '@/components/PageBackButton'
 import PageLoader from '@/components/PageLoader'
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
@@ -81,16 +82,7 @@ export default function CreateUserPage() {
     <Card>
       <CardHeader
         title='Add User'
-        action={
-          <Button
-            variant='outlined'
-            startIcon={<i className='tabler-arrow-left' />}
-            onClick={() => router.push('/users')}
-            disabled={isSubmitting}
-          >
-            Back
-          </Button>
-        }
+        action={<PageBackButton onClick={() => router.push('/users')} disabled={isSubmitting} />}
       />
       <Divider />
       <CardContent sx={{ pt: 4 }}>

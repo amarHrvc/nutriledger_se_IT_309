@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
+import CardHeader from '@mui/material/CardHeader'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
 import Divider from '@mui/material/Divider'
 
+import PageBackButton from '@/components/PageBackButton'
 import PageLoader from '@/components/PageLoader'
 import SocioeconomicFormFields from '@/components/SocioeconomicFormFields'
 import CustomTextField from '@core/components/mui/TextField'
@@ -129,11 +130,14 @@ export default function CreatePatientPage() {
 
   return (
     <Card>
-      <CardContent>
-        <Typography variant='h5' className='mb-6'>
-          Create New Patient
-        </Typography>
-
+      <CardHeader
+        title='Create New Patient'
+        action={
+          <PageBackButton onClick={() => router.push('/patients')} disabled={isSubmitting} />
+        }
+      />
+      <Divider />
+      <CardContent sx={{ pt: 4 }}>
         {error && <Alert severity='error' className='mb-4'>{error}</Alert>}
         {usersError && <Alert severity='error' className='mb-4'>{usersError}</Alert>}
         {!usersLoading && eligibleUsers.length === 0 && !usersError && (

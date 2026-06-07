@@ -15,6 +15,7 @@ import { patientsVisitsDestroy } from '@/api/generated/visit/visit'
 import type { VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import PageBackButton, { cardHeaderActionsSx, responsiveCardHeaderSx } from '@/components/PageBackButton'
 import { notify } from '@/utils/notify'
 import VisitEditForm from './VisitEditForm'
 
@@ -60,7 +61,11 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
   if (editing) {
     return (
       <Card>
-        <CardHeader title='Edit Visit' />
+        <CardHeader
+          title='Edit Visit'
+          action={<PageBackButton size='small' onClick={() => setEditing(false)} label='Cancel' />}
+        />
+        <Divider />
         <CardContent>
           <VisitEditForm
             visit={visit}
@@ -78,8 +83,9 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
       <Card>
         <CardHeader
           title='Visit Details'
+          sx={responsiveCardHeaderSx}
           action={
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={cardHeaderActionsSx}>
               {isStaff && (
                 <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
                   Edit
@@ -97,6 +103,7 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
                   Delete
                 </Button>
               )}
+              <PageBackButton size='small' onClick={() => router.push('/visits')} />
             </Box>
           }
         />

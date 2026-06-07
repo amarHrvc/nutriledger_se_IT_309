@@ -42,7 +42,7 @@ export default function SocioeconomicDetail({ data }: Props) {
     text ? (
       <Box
         sx={{
-          p: 2.5,
+          p: { xs: 2, sm: 2.5 },
           borderRadius: 1,
           border: '1px solid',
           borderColor: 'divider',

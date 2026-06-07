@@ -14,6 +14,7 @@ import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
+import PageBackButton, { cardHeaderActionsSx, responsiveCardHeaderSx } from '@/components/PageBackButton'
 import PageLoader from '@/components/PageLoader'
 import { client, ApiError } from '@/api/client'
 import type { UserResource } from '@/api/generated/nutriBaseAPI.schemas'
@@ -136,9 +137,9 @@ export default function ViewUserPage() {
       <Card>
         <CardContent>
           <Alert severity='error'>{error || 'User not found'}</Alert>
-          <Button variant='outlined' onClick={() => router.push('/users')} sx={{ mt: 4 }}>
-            Back to Users
-          </Button>
+          <Box sx={{ mt: 4 }}>
+            <PageBackButton onClick={() => router.push('/users')} label='Back to Users' />
+          </Box>
         </CardContent>
       </Card>
     )
@@ -153,8 +154,9 @@ export default function ViewUserPage() {
       <Card>
         <CardHeader
           title='User Details'
+          sx={responsiveCardHeaderSx}
           action={
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            <Box sx={cardHeaderActionsSx}>
               {!isDeleted && (
                 <Button
                   size='small'
@@ -202,15 +204,11 @@ export default function ViewUserPage() {
                   Delete
                 </Button>
               )}
-              <Button
+              <PageBackButton
                 size='small'
-                variant='tonal'
-                color='secondary'
                 onClick={() => router.push('/users')}
                 disabled={actionLoading}
-              >
-                Back
-              </Button>
+              />
             </Box>
           }
         />

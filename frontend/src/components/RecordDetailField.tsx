@@ -39,7 +39,7 @@ export function DetailField({ label, value, fullWidth }: DetailFieldProps) {
     <Grid size={{ xs: 12, sm: fullWidth ? 12 : 6, lg: fullWidth ? 12 : 4 }}>
       <Box
         sx={{
-          p: 2.5,
+          p: { xs: 2, sm: 2.5 },
           height: '100%',
           borderRadius: 1,
           border: '1px solid',

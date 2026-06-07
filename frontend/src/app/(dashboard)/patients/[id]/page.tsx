@@ -15,6 +15,7 @@ import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
+import PageBackButton, { cardHeaderActionsSx, responsiveCardHeaderSx } from '@/components/PageBackButton'
 import { DetailField, SectionTitle } from '@/components/RecordDetailField'
 import SocioeconomicDetail from '@/components/SocioeconomicDetail'
 import CustomAvatar from '@core/components/mui/Avatar'
@@ -63,7 +64,7 @@ function NotesField({ label, value }: { label: string; value: string | null }) {
     <Grid size={{ xs: 12 }}>
       <Box
         sx={{
-          p: 2.5,
+          p: { xs: 2, sm: 2.5 },
           borderRadius: 1,
           border: '1px solid',
           borderColor: 'divider',
@@ -129,9 +130,12 @@ export default function ViewPatientPage() {
       <Card>
         <CardContent>
           <Alert severity='error'>{error || 'Patient not found'}</Alert>
-          <Button variant='outlined' onClick={() => router.push('/patients')} className='mt-4'>
-            {isPatient ? `Back to ${PATIENTS_NAV.patientLabel}` : `Back to ${PATIENTS_NAV.staffLabel}`}
-          </Button>
+          <Box sx={{ mt: 4 }}>
+            <PageBackButton
+              onClick={() => router.push('/patients')}
+              label={isPatient ? `Back to ${PATIENTS_NAV.patientLabel}` : `Back to ${PATIENTS_NAV.staffLabel}`}
+            />
+          </Box>
         </CardContent>
       </Card>
     )
@@ -150,8 +154,9 @@ export default function ViewPatientPage() {
             <i className={isPatient ? PATIENTS_NAV.icon : 'tabler-user'} />
           </CustomAvatar>
         }
+        sx={responsiveCardHeaderSx}
         action={
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <Box sx={cardHeaderActionsSx}>
             {attributes.bloodType && (
               <Chip label={`Blood type: ${attributes.bloodType}`} size='small' color='error' variant='tonal' />
             )}
@@ -166,15 +171,13 @@ export default function ViewPatientPage() {
                 Edit
               </Button>
             )}
-            <Button variant='outlined' size='small' onClick={() => router.push('/patients')}>
-              Back
-            </Button>
+            <PageBackButton size='small' onClick={() => router.push('/patients')} />
           </Box>
         }
       />
       <Divider />
-      <CardContent sx={{ pt: 4 }}>
-        <Grid container spacing={6}>
+      <CardContent sx={{ pt: { xs: 3, sm: 4 } }}>
+        <Grid container spacing={{ xs: 4, sm: 6 }}>
           <Grid size={{ xs: 12, lg: 6 }}>
             <SectionTitle icon='tabler-id'>Personal Information</SectionTitle>
             <Grid container spacing={3}>

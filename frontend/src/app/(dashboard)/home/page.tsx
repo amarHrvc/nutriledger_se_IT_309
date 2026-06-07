@@ -262,6 +262,16 @@ export default function HomePage() {
                 >
                   Add Patient
                 </Button>
+                {role === 'admin' && (
+                  <Button
+                    fullWidth
+                    variant='outlined'
+                    startIcon={<i className='tabler-user-plus' />}
+                    onClick={() => router.push('/users/create')}
+                  >
+                    Add User
+                  </Button>
+                )}
                 <Button
                   fullWidth
                   variant='outlined'
