@@ -26,6 +26,7 @@ import Typography from '@mui/material/Typography'
 import { patientsIndex } from '@/api/generated/patient/patient'
 import { patientsVisitsIndex } from '@/api/generated/visit/visit'
 import type { PatientResource, VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 import VisitForm from './VisitForm'
 
 type FlatVisit = {
@@ -39,6 +40,7 @@ export default function VisitsView() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
+  const { isPatient, isStaff } = useCurrentUser()
 
   const loadAllVisits = useCallback(async () => {
     try {
@@ -99,12 +101,14 @@ export default function VisitsView() {
     <>
       <Card>
         <CardHeader
-          title='Visit History'
+          title={isPatient ? 'My Visits' : 'Visit History'}
           subheader={`${flatVisits.length} visit${flatVisits.length !== 1 ? 's' : ''} total`}
           action={
-            <Button variant='contained' startIcon={<i className='tabler-plus' />} onClick={() => setCreateOpen(true)}>
-              New Visit
-            </Button>
+            isStaff ? (
+              <Button variant='contained' startIcon={<i className='tabler-plus' />} onClick={() => setCreateOpen(true)}>
+                New Visit
+              </Button>
+            ) : undefined
           }
         />
         <CardContent sx={{ p: 0 }}>
@@ -118,7 +122,7 @@ export default function VisitsView() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Date</TableCell>
-                    <TableCell>Patient</TableCell>
+                    {!isPatient && <TableCell>Patient</TableCell>}
                     <TableCell>Doctor</TableCell>
                     <TableCell>Notes</TableCell>
                     <TableCell align='right'>Actions</TableCell>
@@ -128,7 +132,7 @@ export default function VisitsView() {
                   {flatVisits.map(({ visit, patient }) => (
                     <TableRow key={`${patient.id}-${visit.id}`} hover>
                       <TableCell>{new Date(visit.attributes.date).toLocaleDateString()}</TableCell>
-                      <TableCell>{patient.attributes.fullName}</TableCell>
+                      {!isPatient && <TableCell>{patient.attributes.fullName}</TableCell>}
                       <TableCell>{visit.attributes.doctorName ?? '—'}</TableCell>
                       <TableCell sx={{ maxWidth: 240 }}>
                         <Typography noWrap variant='body2'>{visit.attributes.notes ?? '—'}</Typography>

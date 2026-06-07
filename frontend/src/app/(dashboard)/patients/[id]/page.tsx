@@ -13,6 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
 import { client, ApiError } from '@/api/client'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 type PatientAttributes = {
   firstName: string
@@ -54,6 +55,7 @@ export default function ViewPatientPage() {
   const [patient, setPatient] = useState<PatientResource | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { isPatient } = useCurrentUser()
 
   useEffect(() => {
     loadPatient()
@@ -90,7 +92,7 @@ export default function ViewPatientPage() {
         <CardContent>
           <Alert severity='error'>{error || 'Patient not found'}</Alert>
           <Button variant='outlined' onClick={() => router.push('/patients')} className='mt-4'>
-            Back to Patients
+            {isPatient ? 'Back to My Record' : 'Back to Patients'}
           </Button>
         </CardContent>
       </Card>
@@ -101,15 +103,17 @@ export default function ViewPatientPage() {
     <Card>
       <CardContent>
         <div className='flex justify-between items-center mb-6'>
-          <Typography variant='h5'>Patient Details</Typography>
+          <Typography variant='h5'>{isPatient ? 'My Record' : 'Patient Details'}</Typography>
           <div className='flex gap-2'>
-            <Button
-              variant='contained'
-              startIcon={<i className='tabler-edit' />}
-              onClick={() => router.push(`/patients/${id}/edit`)}
-            >
-              Edit
-            </Button>
+            {!isPatient && (
+              <Button
+                variant='contained'
+                startIcon={<i className='tabler-edit' />}
+                onClick={() => router.push(`/patients/${id}/edit`)}
+              >
+                Edit
+              </Button>
+            )}
             <Button variant='outlined' onClick={() => router.push('/patients')}>
               Back
             </Button>

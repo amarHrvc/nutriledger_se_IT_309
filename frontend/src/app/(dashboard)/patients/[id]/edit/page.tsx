@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography'
 
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 type PatientAttributes = {
   firstName: string; lastName: string; fullName: string; dateOfBirth: string; gender: string
@@ -40,6 +41,13 @@ export default function EditPatientPage() {
   const router = useRouter()
   const params = useParams()
   const id = params.id as string
+  const { isPatient, ready } = useCurrentUser()
+
+  useEffect(() => {
+    if (ready && isPatient) {
+      router.replace(`/patients/${id}`)
+    }
+  }, [ready, isPatient, router, id])
 
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -107,7 +115,7 @@ export default function EditPatientPage() {
     }
   }
 
-  if (loading) {
+  if (!ready || isPatient || loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
         <CircularProgress />

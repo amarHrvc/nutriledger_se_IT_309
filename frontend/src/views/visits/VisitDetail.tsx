@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import Box from '@mui/material/Box'
@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography'
 
 import { patientsVisitsDestroy } from '@/api/generated/visit/visit'
 import type { VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 import VisitEditForm from './VisitEditForm'
 
 type Props = {
@@ -24,17 +25,10 @@ type Props = {
 export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
   const router = useRouter()
   const [editing, setEditing] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const { attributes } = visit
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      setIsAdmin(JSON.parse(storedUser).attributes?.role === 'admin')
-    }
-  }, [])
+  const { isAdmin, isPatient, isStaff } = useCurrentUser()
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this visit?')) return
@@ -77,9 +71,11 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
         title='Visit Details'
         action={
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
-              Edit
-            </Button>
+            {isStaff && (
+              <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
+                Edit
+              </Button>
+            )}
             {isAdmin && (
               <Button
                 size='small'

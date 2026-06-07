@@ -16,8 +16,10 @@ import IconButton from '@mui/material/IconButton'
 import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
+import Divider from '@mui/material/Divider'
 
 import { client, ApiError } from '@/api/client'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 type PatientAttributes = {
   firstName: string
@@ -53,15 +55,70 @@ type PatientListResponse = {
   links?: any
 }
 
+function MyRecordCard({ patient, onView }: { patient: PatientResource; onView: () => void }) {
+  const { attributes } = patient
+
+  return (
+    <Card>
+      <CardContent className='p-6'>
+        <Typography variant='h5' className='mb-4'>
+          My Record
+        </Typography>
+        <Divider className='mb-4' />
+        <div className='flex flex-col gap-3 mb-6'>
+          <div>
+            <Typography variant='body2' color='text.secondary'>
+              Name
+            </Typography>
+            <Typography variant='body1'>{attributes.fullName}</Typography>
+          </div>
+          <div>
+            <Typography variant='body2' color='text.secondary'>
+              Date of birth
+            </Typography>
+            <Typography variant='body1'>
+              {new Date(attributes.dateOfBirth).toLocaleDateString()}
+            </Typography>
+          </div>
+          <div>
+            <Typography variant='body2' color='text.secondary'>
+              Phone
+            </Typography>
+            <Typography variant='body1'>{attributes.phone || '—'}</Typography>
+          </div>
+          <div>
+            <Typography variant='body2' color='text.secondary'>
+              Blood type
+            </Typography>
+            <Typography variant='body1'>{attributes.bloodType || '—'}</Typography>
+          </div>
+          <div>
+            <Typography variant='body2' color='text.secondary'>
+              Allergies
+            </Typography>
+            <Typography variant='body1'>{attributes.allergies || '—'}</Typography>
+          </div>
+        </div>
+        <Button variant='contained' startIcon={<i className='tabler-eye' />} onClick={onView}>
+          View full record
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function PatientsPage() {
   const [patients, setPatients] = useState<PatientResource[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const { isPatient, isStaff, ready } = useCurrentUser()
 
   useEffect(() => {
-    loadPatients()
-  }, [])
+    if (ready) {
+      loadPatients()
+    }
+  }, [ready])
 
   const loadPatients = async () => {
     try {
@@ -95,11 +152,30 @@ export default function PatientsPage() {
     }
   }
 
-  if (loading) {
+  if (!ready || loading) {
     return (
       <div className='flex justify-center items-center min-h-[400px]'>
         <CircularProgress />
       </div>
+    )
+  }
+
+  if (isPatient) {
+    if (error) {
+      return <Alert severity='error'>{error}</Alert>
+    }
+
+    if (patients.length === 0) {
+      return (
+        <Alert severity='info'>No medical record is linked to your account yet.</Alert>
+      )
+    }
+
+    return (
+      <MyRecordCard
+        patient={patients[0]}
+        onView={() => router.push(`/patients/${patients[0].id}`)}
+      />
     )
   }
 
@@ -108,13 +184,15 @@ export default function PatientsPage() {
       <CardContent>
         <div className='flex justify-between items-center mb-6'>
           <Typography variant='h5'>Patients</Typography>
-          <Button
-            variant='contained'
-            startIcon={<i className='tabler-plus' />}
-            onClick={() => router.push('/patients/create')}
-          >
-            Add Patient
-          </Button>
+          {isStaff && (
+            <Button
+              variant='contained'
+              startIcon={<i className='tabler-plus' />}
+              onClick={() => router.push('/patients/create')}
+            >
+              Add Patient
+            </Button>
+          )}
         </div>
 
         {error && <Alert severity='error' className='mb-4'>{error}</Alert>}

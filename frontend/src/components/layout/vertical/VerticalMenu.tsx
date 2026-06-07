@@ -1,3 +1,5 @@
+'use client'
+
 // MUI Imports
 import { useTheme } from '@mui/material/styles'
 
@@ -12,6 +14,7 @@ import { Menu, MenuItem } from '@menu/vertical-menu'
 
 // Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 // Styled Component Imports
 import StyledVerticalNavExpandIcon from '@menu/styles/vertical/StyledVerticalNavExpandIcon'
@@ -39,6 +42,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
+  const { isPatient } = useCurrentUser()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
@@ -72,7 +76,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
           Home
         </MenuItem>
         <MenuItem href='/patients' icon={<i className='tabler-users' />}>
-          Patients
+          {isPatient ? 'My Record' : 'Patients'}
         </MenuItem>
         <MenuItem href='/visits' icon={<i className='tabler-calendar-event' />}>
           Visits

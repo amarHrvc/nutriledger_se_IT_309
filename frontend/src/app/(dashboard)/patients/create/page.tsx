@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -12,9 +12,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 export default function CreatePatientPage() {
   const router = useRouter()
+  const { isPatient, ready } = useCurrentUser()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]> | null>(null)
@@ -35,6 +37,20 @@ export default function CreatePatientPage() {
     allergies: '',
     medical_notes: ''
   })
+
+  useEffect(() => {
+    if (ready && isPatient) {
+      router.replace('/patients')
+    }
+  }, [ready, isPatient, router])
+
+  if (!ready || isPatient) {
+    return (
+      <div className='flex justify-center items-center min-h-[400px]'>
+        <CircularProgress />
+      </div>
+    )
+  }
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
