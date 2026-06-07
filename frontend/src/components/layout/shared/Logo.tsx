@@ -11,7 +11,7 @@ import styled from '@emotion/styled'
 import type { VerticalNavContextProps } from '@menu/contexts/verticalNavContext'
 
 // Component Imports
-import VuexyLogo from '@core/svg/Logo'
+import NutriLedgerLogo from '@core/svg/Logo'
 
 // Config Imports
 import themeConfig from '@configs/themeConfig'
@@ -71,7 +71,7 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
 
   return (
     <div className='flex items-center'>
-      <VuexyLogo />
+      <NutriLedgerLogo className='text-[1.75rem] text-primary shrink-0' />
       <LogoText
         color={color}
         ref={logoTextRef}
@@ -80,7 +80,7 @@ const Logo = ({ color }: { color?: CSSProperties['color'] }) => {
         transitionDuration={transitionDuration}
         isBreakpointReached={isBreakpointReached}
       >
-        {/*{themeConfig.templateName}*/}
+        {themeConfig.templateName}
       </LogoText>
     </div>
   )
