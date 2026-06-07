@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -10,6 +11,7 @@ import CardHeader from '@mui/material/CardHeader'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
+import { patientsVisitsDestroy } from '@/api/generated/visit/visit'
 import type { VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
 import VisitEditForm from './VisitEditForm'
 
@@ -20,8 +22,38 @@ type Props = {
 }
 
 export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
+  const router = useRouter()
   const [editing, setEditing] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const { attributes } = visit
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      setIsAdmin(JSON.parse(storedUser).attributes?.role === 'admin')
+    }
+  }, [])
+
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this visit?')) return
+
+    try {
+      setDeleting(true)
+      setDeleteError(null)
+      const res = await patientsVisitsDestroy(Number(patientId), Number(visit.id))
+      if (res.status !== 204) {
+        throw new Error((res.data as { message?: string })?.message ?? 'Failed to delete visit.')
+      }
+      window.dispatchEvent(new Event('visits:changed'))
+      router.push('/visits')
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete visit.')
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   if (editing) {
     return (
@@ -44,13 +76,32 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
       <CardHeader
         title='Visit Details'
         action={
-          <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
-            Edit
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
+              Edit
+            </Button>
+            {isAdmin && (
+              <Button
+                size='small'
+                variant='outlined'
+                color='error'
+                startIcon={<i className='tabler-trash' />}
+                disabled={deleting}
+                onClick={handleDelete}
+              >
+                Delete
+              </Button>
+            )}
+          </Box>
         }
       />
       <CardContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {deleteError && (
+            <Typography variant='body2' color='error'>
+              {deleteError}
+            </Typography>
+          )}
           <Box>
             <Typography variant='body2' color='text.secondary' mb={0.5}>Date</Typography>
             <Typography variant='body1'>{new Date(attributes.date).toLocaleDateString()}</Typography>
