@@ -26,6 +26,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property-read string|null $medical_notes;
  * @property-read ?Carbon $created_at;
  * @property-read ?Carbon $updated_at;
+ * @property-read ?Carbon $deleted_at;
  * @property-read PatientSocioeconomic|null $socioeconomic;
  * @property-read User|null $user;
  **/
@@ -58,6 +59,7 @@ class PatientResource extends JsonResource
                 'medicalNotes' => $this->medical_notes,
                 'createdAt' => $this->created_at?->toIso8601String(),
                 'updatedAt' => $this->updated_at?->toIso8601String(),
+                'deletedAt' => $this->deleted_at?->toIso8601String(),
             ],
             'relationships' => [
                 'user' => [

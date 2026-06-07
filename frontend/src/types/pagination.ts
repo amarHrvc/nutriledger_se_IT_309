@@ -17,8 +17,18 @@ export type PaginatedResponse<T> = {
 
 export const DEFAULT_PAGE_SIZE = 10
 
-export function buildPageQuery(page: number, perPage = DEFAULT_PAGE_SIZE) {
-  return `page=${page}&per_page=${perPage}`
+export function buildPageQuery(page: number, perPage = DEFAULT_PAGE_SIZE, search?: string) {
+  const params = new URLSearchParams({
+    page: String(page),
+    per_page: String(perPage)
+  })
+
+  const trimmed = search?.trim()
+  if (trimmed) {
+    params.set('search', trimmed)
+  }
+
+  return params.toString()
 }
 
 export function clientPaginationMeta(total: number, page: number, perPage: number): PaginationMeta {

@@ -23,10 +23,31 @@ class PatientController extends ApiController
     {
         $this->authorize('viewAny', Patient::class);
 
-        $query = Patient::with(['socioeconomic', 'user']);
+        $query = $request->user()->isAdmin()
+            ? Patient::withTrashed()
+            : Patient::query();
+
+        $query->with(['socioeconomic', 'user']);
 
         if ($request->user()->isPatient()) {
             $query->where('user_id', $request->user()->id);
+        }
+
+        if ($search = trim((string) $request->query('search', ''))) {
+            $terms = preg_split('/\s+/', $search, 2, PREG_SPLIT_NO_EMPTY);
+
+            if (count($terms) === 2) {
+                [$first, $last] = $terms;
+                $query->where(function ($builder) use ($first, $last) {
+                    $builder->where('first_name', 'like', "%{$first}%")
+                        ->where('last_name', 'like', "%{$last}%");
+                });
+            } else {
+                $query->where(function ($builder) use ($search) {
+                    $builder->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
+                });
+            }
         }
 
         return $this->paginated('Patients retrieved successfully.', PatientResource::collection($query->paginate()));
@@ -54,12 +75,16 @@ class PatientController extends ApiController
     /**
      * Display the specified resource.
      */
-    public function show(Patient $patient): JsonResponse
+    public function show(Request $request, string $patient): JsonResponse
     {
-        $this->authorize('view', $patient);
+        $model = $request->user()->isAdmin()
+            ? Patient::withTrashed()->findOrFail($patient)
+            : Patient::findOrFail($patient);
+
+        $this->authorize('view', $model);
 
         return $this->ok('Patient retrieved successfully.',
-            ['patient' => new PatientResource($patient->load(['socioeconomic', 'user']))]);
+            ['patient' => new PatientResource($model->load(['socioeconomic', 'user']))]);
     }
 
     /**
@@ -87,5 +112,18 @@ class PatientController extends ApiController
         $patient->delete();
 
         return $this->noContent();
+    }
+
+    public function restore(string $id): JsonResponse
+    {
+        $patient = Patient::withTrashed()->findOrFail($id);
+
+        $this->authorize('restore', $patient);
+
+        $patient->restore();
+
+        return $this->ok('Patient restored successfully.', [
+            'patient' => new PatientResource($patient->fresh()->load(['socioeconomic', 'user'])),
+        ]);
     }
 }

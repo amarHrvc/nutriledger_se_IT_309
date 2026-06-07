@@ -16,6 +16,8 @@ import IconButton from '@mui/material/IconButton'
 import Chip from '@mui/material/Chip'
 import Alert from '@mui/material/Alert'
 import Divider from '@mui/material/Divider'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 
 import ListPagination from '@/components/ListPagination'
@@ -43,6 +45,7 @@ type PatientAttributes = {
   medicalNotes: string | null
   createdAt: string
   updatedAt: string
+  deletedAt?: string | null
 }
 
 type PatientResource = {
@@ -112,20 +115,38 @@ export default function PatientsPage() {
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [meta, setMeta] = useState<PaginationMeta | null>(null)
+  const [searchInput, setSearchInput] = useState('')
+  const [search, setSearch] = useState('')
   const router = useRouter()
-  const { isPatient, isStaff, ready } = useCurrentUser()
+  const { isPatient, isStaff, isAdmin, ready } = useCurrentUser()
   const { confirm, ConfirmDialog } = useConfirm()
 
   useEffect(() => {
-    if (ready) {
-      loadPatients(page)
-    }
-  }, [ready, page])
+    const timer = setTimeout(() => {
+      const trimmed = searchInput.trim()
+      setSearch(prev => {
+        if (prev !== trimmed) {
+          setPage(1)
+        }
+        return trimmed
+      })
+    }, 300)
 
-  const loadPatients = async (pageNum: number) => {
+    return () => clearTimeout(timer)
+  }, [searchInput])
+
+  useEffect(() => {
+    if (ready) {
+      loadPatients(page, search)
+    }
+  }, [ready, page, search])
+
+  const loadPatients = async (pageNum: number, searchTerm = '') => {
     try {
       setLoading(true)
-      const res = await client.get<PatientListResponse>(`api/patients?${buildPageQuery(pageNum)}`)
+      const res = await client.get<PatientListResponse>(
+        `api/patients?${buildPageQuery(pageNum, undefined, searchTerm)}`
+      )
       setPatients(res.data)
       setMeta(res.meta ?? null)
       setError(null)
@@ -155,10 +176,28 @@ export default function PatientsPage() {
       if (patients.length === 1 && page > 1) {
         setPage(page - 1)
       } else {
-        await loadPatients(page)
+        await loadPatients(page, search)
       }
     } catch (err) {
       notify.error(err instanceof ApiError ? err.message : 'Failed to delete patient')
+    }
+  }
+
+  const handleRestore = async (id: string) => {
+    const confirmed = await confirm({
+      title: 'Restore patient',
+      message: 'This patient will appear in the active list again.',
+      confirmLabel: 'Restore',
+      confirmColor: 'success'
+    })
+    if (!confirmed) return
+
+    try {
+      await client.post(`api/patients/${id}/restore`, {})
+      notify.success('Patient restored.')
+      await loadPatients(page, search)
+    } catch (err) {
+      notify.error(err instanceof ApiError ? err.message : 'Failed to restore patient')
     }
   }
 
@@ -202,10 +241,30 @@ export default function PatientsPage() {
             )}
           </div>
 
+          <TextField
+            fullWidth
+            size='small'
+            placeholder='Search by name…'
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            className='mb-4'
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position='start'>
+                    <i className='tabler-search' />
+                  </InputAdornment>
+                )
+              }
+            }}
+          />
+
           {error && <Alert severity='error' className='mb-4'>{error}</Alert>}
 
           {patients.length === 0 ? (
-            <Alert severity='info'>No patients found. Create your first patient to get started.</Alert>
+            <Alert severity='info'>
+              {search ? 'No patients match your search.' : 'No patients found. Create your first patient to get started.'}
+            </Alert>
           ) : (
             <TableContainer>
               <Table>
@@ -216,50 +275,83 @@ export default function PatientsPage() {
                     <TableCell>Gender</TableCell>
                     <TableCell>Phone</TableCell>
                     <TableCell>Blood Type</TableCell>
+                    {isAdmin && <TableCell>Status</TableCell>}
                     <TableCell align='right'>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {patients.map(patient => (
-                    <TableRow key={patient.id} hover>
-                      <TableCell>
-                        {patient.attributes.firstName} {patient.attributes.lastName}
-                      </TableCell>
-                      <TableCell>{new Date(patient.attributes.dateOfBirth).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Chip label={patient.attributes.gender === 'M' ? 'Male' : 'Female'} size='small' />
-                      </TableCell>
-                      <TableCell>{patient.attributes.phone || '-'}</TableCell>
-                      <TableCell>{patient.attributes.bloodType || '-'}</TableCell>
-                      <TableCell align='right'>
-                        <Tooltip title='View'>
-                          <IconButton
-                            size='small'
-                            onClick={() => router.push(`/patients/${patient.id}`)}
-                          >
-                            <i className='tabler-eye' />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title='Edit'>
-                          <IconButton
-                            size='small'
-                            onClick={() => router.push(`/patients/${patient.id}/edit`)}
-                          >
-                            <i className='tabler-edit' />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title='Delete'>
-                          <IconButton
-                            size='small'
-                            color='error'
-                            onClick={() => handleDelete(patient.id)}
-                          >
-                            <i className='tabler-trash' />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {patients.map(patient => {
+                    const isDeleted = !!patient.attributes.deletedAt
+
+                    return (
+                      <TableRow
+                        key={patient.id}
+                        hover
+                        sx={isDeleted ? { opacity: 0.65 } : undefined}
+                      >
+                        <TableCell>
+                          {patient.attributes.firstName} {patient.attributes.lastName}
+                        </TableCell>
+                        <TableCell>{new Date(patient.attributes.dateOfBirth).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Chip label={patient.attributes.gender === 'M' ? 'Male' : 'Female'} size='small' />
+                        </TableCell>
+                        <TableCell>{patient.attributes.phone || '-'}</TableCell>
+                        <TableCell>{patient.attributes.bloodType || '-'}</TableCell>
+                        {isAdmin && (
+                          <TableCell>
+                            <Chip
+                              label={isDeleted ? 'Deleted' : 'Active'}
+                              size='small'
+                              color={isDeleted ? 'default' : 'success'}
+                            />
+                          </TableCell>
+                        )}
+                        <TableCell align='right'>
+                          <Tooltip title='View'>
+                            <IconButton
+                              size='small'
+                              onClick={() => router.push(`/patients/${patient.id}`)}
+                            >
+                              <i className='tabler-eye' />
+                            </IconButton>
+                          </Tooltip>
+                          {!isDeleted && (
+                            <Tooltip title='Edit'>
+                              <IconButton
+                                size='small'
+                                onClick={() => router.push(`/patients/${patient.id}/edit`)}
+                              >
+                                <i className='tabler-edit' />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          {!isDeleted && (
+                            <Tooltip title='Delete'>
+                              <IconButton
+                                size='small'
+                                color='error'
+                                onClick={() => handleDelete(patient.id)}
+                              >
+                                <i className='tabler-trash' />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          {isDeleted && isAdmin && (
+                            <Tooltip title='Restore'>
+                              <IconButton
+                                size='small'
+                                color='success'
+                                onClick={() => handleRestore(patient.id)}
+                              >
+                                <i className='tabler-refresh' />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>

@@ -18,6 +18,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('users', UserController::class);
 
     Route::apiResource('patients', PatientController::class);
+    Route::post('/patients/{id}/restore', [PatientController::class, 'restore'])->name('patients.restore');
 
     Route::middleware(['role:admin'])->group(function () {
         Route::post('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
