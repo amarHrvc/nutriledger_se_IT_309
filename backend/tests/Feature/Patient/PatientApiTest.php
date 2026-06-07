@@ -121,7 +121,8 @@ it('allows admin to view single patient with socioeconomic', function () {
             ],
         ])
         ->assertJsonPath('data.patient.type', 'patient')
-        ->assertJsonPath('data.patient.id', (string) $patient->id);
+        ->assertJsonPath('data.patient.id', (string) $patient->id)
+        ->assertJsonPath('data.patient.included.socioeconomic.attributes.employmentStatus', $patient->socioeconomic->employment_status);
 });
 
 // T016
@@ -161,7 +162,7 @@ it('allows admin to soft-delete patient and cascades to socioeconomic', function
 });
 
 // T018
-it('excludes soft-deleted patients from list', function () {
+it('includes soft-deleted patients in admin list', function () {
     $admin = User::factory()->admin()->create();
     $active = Patient::factory()->create(['first_name' => 'Active']);
     $deleted = Patient::factory()->create(['first_name' => 'Deleted']);
@@ -174,7 +175,74 @@ it('excludes soft-deleted patients from list', function () {
 
     $ids = collect($response->json('data'))->pluck('id')->map(fn ($id) => (int) $id)->all();
     expect($ids)->toContain($active->id)
+        ->toContain($deleted->id);
+});
+
+it('excludes soft-deleted patients from doctor list', function () {
+    $doctor = User::factory()->doctor()->create();
+    $active = Patient::factory()->create(['first_name' => 'Active']);
+    $deleted = Patient::factory()->create(['first_name' => 'Deleted']);
+    $deleted->delete();
+
+    $response = $this->actingAs($doctor)
+        ->getJson('/api/patients');
+
+    $response->assertOk();
+
+    $ids = collect($response->json('data'))->pluck('id')->map(fn ($id) => (int) $id)->all();
+    expect($ids)->toContain($active->id)
         ->not->toContain($deleted->id);
+});
+
+it('filters patients by first or last name', function () {
+    $admin = User::factory()->admin()->create();
+    Patient::factory()->create(['first_name' => 'Alice', 'last_name' => 'Smith']);
+    Patient::factory()->create(['first_name' => 'Bob', 'last_name' => 'Jones']);
+
+    $response = $this->actingAs($admin)
+        ->getJson('/api/patients?search=Alice');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.attributes.firstName', 'Alice');
+});
+
+it('filters patients by full name', function () {
+    $admin = User::factory()->admin()->create();
+    Patient::factory()->create(['first_name' => 'Alice', 'last_name' => 'Smith']);
+    Patient::factory()->create(['first_name' => 'Bob', 'last_name' => 'Jones']);
+
+    $response = $this->actingAs($admin)
+        ->getJson('/api/patients?search=Alice Smith');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.attributes.fullName', 'Alice Smith');
+});
+
+it('allows admin to restore soft-deleted patient', function () {
+    $admin = User::factory()->admin()->create();
+    $patient = Patient::factory()->hasSocioeconomic()->create();
+    $socioId = $patient->socioeconomic->id;
+    $patient->delete();
+
+    $response = $this->actingAs($admin)
+        ->postJson("/api/patients/{$patient->id}/restore");
+
+    $response->assertOk()
+        ->assertJsonPath('data.patient.attributes.deletedAt', null);
+
+    $this->assertNotSoftDeleted('patients', ['id' => $patient->id]);
+    $this->assertNotSoftDeleted('patient_socioeconomic', ['id' => $socioId]);
+});
+
+it('forbids patient role from restoring patients', function () {
+    $patient = Patient::factory()->create();
+    $patient->delete();
+
+    $this->actingAs($patient->user)
+        ->postJson("/api/patients/{$patient->id}/restore")
+        ->assertForbidden();
 });
 
 // T019
@@ -187,6 +255,7 @@ it('returns 401 for unauthenticated requests', function (string $method, string 
     ['GET', '/api/patients/1'],
     ['PATCH', '/api/patients/1'],
     ['DELETE', '/api/patients/1'],
+    ['POST', '/api/patients/1/restore'],
 ]);
 
 // T020

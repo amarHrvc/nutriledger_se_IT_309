@@ -43,17 +43,7 @@ class UpdatePatientRequest extends FormRequest
 
             'user_id' => ['prohibited'],
 
-            'socioeconomic' => ['sometimes', 'nullable', 'array'],
-            'socioeconomic.marital_status' => ['sometimes', 'nullable', 'in:single,married,divorced,widowed,separated,other'],
-            'socioeconomic.number_of_dependents' => ['sometimes', 'nullable', 'integer', 'min:0'],
-            'socioeconomic.employment_status' => ['sometimes', 'nullable', 'in:employed_full_time,employed_part_time,self_employed,unemployed,retired,student,unable_to_work,other'],
-            'socioeconomic.income_level' => ['sometimes', 'nullable', 'in:low,lower_middle,middle,upper_middle,high'],
-            'socioeconomic.has_health_insurance' => ['sometimes', 'nullable', 'boolean'],
-            'socioeconomic.smoking_status' => ['sometimes', 'nullable', 'in:never,former,current_light,current_heavy'],
-            'socioeconomic.alcohol_consumption' => ['sometimes', 'nullable', 'in:none,occasional,moderate,heavy'],
-            'socioeconomic.physical_activity_level' => ['sometimes', 'nullable', 'in:sedentary,lightly_active,moderately_active,very_active'],
-            'socioeconomic.food_security_status' => ['sometimes', 'nullable', 'in:food_secure,food_insecure,unsure'],
-            'socioeconomic.additional_notes' => ['sometimes', 'nullable', 'string'],
+            ...StorePatientRequest::socioeconomicRulesForUpdate(),
         ];
     }
 }

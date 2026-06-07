@@ -162,3 +162,23 @@ test('PatientResource with() returns empty array when patient has no socioeconom
 
     expect($with)->toBe([]);
 });
+
+test('PatientResource with() includes socioeconomic resource when loaded', function (): void {
+    $patient = Patient::factory()->hasSocioeconomic()->create();
+    $patient->load('socioeconomic');
+
+    $with = (new PatientResource($patient))->with(request());
+
+    expect($with)->toHaveKey('included')
+        ->and($with['included']['socioeconomic'][0]['type'])->toBe('patient_socioeconomic')
+        ->and($with['included']['socioeconomic'][0]['attributes'])->toHaveKey('employmentStatus');
+});
+
+test('PatientResource toArray includes socioeconomic attributes when loaded', function (): void {
+    $patient = Patient::factory()->hasSocioeconomic(['employment_status' => 'employed_full_time'])->create();
+    $patient->load('socioeconomic');
+
+    $data = (new PatientResource($patient))->resolve();
+
+    expect($data['included']['socioeconomic']['attributes']['employmentStatus'])->toBe('employed_full_time');
+});

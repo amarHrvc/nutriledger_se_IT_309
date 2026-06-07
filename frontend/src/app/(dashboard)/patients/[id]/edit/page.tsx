@@ -14,8 +14,20 @@ import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
+import PageBackButton from '@/components/PageBackButton'
+import PageLoader from '@/components/PageLoader'
+import SocioeconomicFormFields from '@/components/SocioeconomicFormFields'
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { notify } from '@/utils/notify'
+import {
+  buildSocioeconomicPayload,
+  emptySocioeconomicForm,
+  getSocioeconomicFromPatient,
+  socioeconomicFromAttributes,
+  type SocioeconomicFormData
+} from '@/utils/socioeconomic'
 
 type PatientAttributes = {
   firstName: string; lastName: string; fullName: string; dateOfBirth: string; gender: string
@@ -24,7 +36,13 @@ type PatientAttributes = {
   allergies: string | null; medicalNotes: string | null; createdAt: string; updatedAt: string
 }
 
-type PatientResource = { type: 'patient'; id: string; attributes: PatientAttributes; relationships: any }
+type PatientResource = {
+  type: 'patient'
+  id: string
+  attributes: PatientAttributes
+  relationships: any
+  included?: { socioeconomic?: { attributes: import('@/utils/socioeconomic').SocioeconomicAttributes } }
+}
 type PatientResponse = { message: string; status: number; data: { patient: PatientResource } }
 
 const SectionTitle = ({ children }: { children: string }) => (
@@ -40,6 +58,13 @@ export default function EditPatientPage() {
   const router = useRouter()
   const params = useParams()
   const id = params.id as string
+  const { isPatient, ready } = useCurrentUser()
+
+  useEffect(() => {
+    if (ready && isPatient) {
+      router.replace(`/patients/${id}`)
+    }
+  }, [ready, isPatient, router, id])
 
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -52,6 +77,7 @@ export default function EditPatientPage() {
     emergency_contact_name: '', emergency_contact_phone: '',
     blood_type: '', allergies: '', medical_notes: ''
   })
+  const [socioForm, setSocioForm] = useState<SocioeconomicFormData>(emptySocioeconomicForm())
 
   useEffect(() => { loadPatient() }, [id])
 
@@ -59,7 +85,11 @@ export default function EditPatientPage() {
     try {
       setLoading(true)
       const res = await client.get<PatientResponse>(`api/patients/${id}`)
-      const a = res.data.patient.attributes
+      const patient = res.data.patient
+      const a = patient.attributes
+      setSocioForm(
+        socioeconomicFromAttributes(getSocioeconomicFromPatient(patient))
+      )
       setFormData({
         first_name: a.firstName, last_name: a.lastName,
         date_of_birth: a.dateOfBirth, gender: a.gender,
@@ -83,13 +113,25 @@ export default function EditPatientPage() {
     if (fieldErrors?.[field]) setFieldErrors(prev => prev ? { ...prev, [field]: undefined } : null)
   }
 
+  const handleSocioChange = (field: keyof SocioeconomicFormData, value: string) => {
+    setSocioForm(prev => ({ ...prev, [field]: value }))
+    const apiKey = `socioeconomic.${field}`
+    if (fieldErrors?.[apiKey]) setFieldErrors(prev => prev ? { ...prev, [apiKey]: undefined } : null)
+  }
+
   const fe = (field: string) => ({ error: !!fieldErrors?.[field], helperText: fieldErrors?.[field]?.[0] })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null); setFieldErrors(null); setIsSubmitting(true)
     try {
-      await client.put(`api/patients/${id}`, formData)
+      const socioeconomic = buildSocioeconomicPayload(socioForm)
+
+      await client.put(`api/patients/${id}`, {
+        ...formData,
+        ...(socioeconomic ? { socioeconomic } : {})
+      })
+      notify.success('Patient updated successfully.')
       router.push(`/patients/${id}`)
     } catch (err) {
       if (err instanceof ApiError) {
@@ -107,23 +149,15 @@ export default function EditPatientPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-        <CircularProgress />
-      </Box>
-    )
+  if (!ready || isPatient || loading) {
+    return <PageLoader />
   }
 
   return (
     <Card>
       <CardHeader
         title='Edit Patient'
-        action={
-          <Button variant='outlined' startIcon={<i className='tabler-arrow-left' />} onClick={() => router.push(`/patients/${id}`)}>
-            Back
-          </Button>
-        }
+        action={<PageBackButton onClick={() => router.push(`/patients/${id}`)} />}
       />
       <Divider />
       <CardContent sx={{ pt: 4 }}>
@@ -234,6 +268,17 @@ export default function EditPatientPage() {
                   onChange={e => handleChange('medical_notes', e.target.value)} {...fe('medical_notes')} />
               </Grid>
             </Grid>
+          </Box>
+
+          <Divider sx={{ mb: 5 }} />
+
+          <Box sx={{ mb: 5 }}>
+            <SectionTitle>Socioeconomic Information</SectionTitle>
+            <SocioeconomicFormFields
+              formData={socioForm}
+              onChange={handleSocioChange}
+              fieldErrors={fieldErrors}
+            />
           </Box>
 
           {/* Actions */}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Api\ChangePasswordRequest;
 use App\Http\Requests\Api\LoginRequest;
 use App\Http\Resources\Api\UserResource;
 use App\Models\User;
@@ -78,5 +79,19 @@ class AuthController extends ApiController
         return $this->ok(
             'Profile retrieved', ['user' => new UserResource($user)]
         );
+    }
+
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
+        $request->user()->update([
+            'password' => $request->validated('password'),
+        ]);
+
+        Log::warning('security.password_changed', [
+            'user_id' => $request->user()->id,
+            'ip' => $request->ip(),
+        ]);
+
+        return $this->ok('Password updated successfully.');
     }
 }

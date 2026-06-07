@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -10,7 +11,12 @@ import CardHeader from '@mui/material/CardHeader'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
+import { patientsVisitsDestroy } from '@/api/generated/visit/visit'
 import type { VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
+import { useConfirm } from '@/hooks/useConfirm'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
+import PageBackButton, { cardHeaderActionsSx, responsiveCardHeaderSx } from '@/components/PageBackButton'
+import { notify } from '@/utils/notify'
 import VisitEditForm from './VisitEditForm'
 
 type Props = {
@@ -20,13 +26,46 @@ type Props = {
 }
 
 export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
+  const router = useRouter()
   const [editing, setEditing] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const { attributes } = visit
+  const { isAdmin, isStaff } = useCurrentUser()
+  const { confirm, ConfirmDialog } = useConfirm()
+
+  const handleDelete = async () => {
+    const confirmed = await confirm({
+      title: 'Delete visit',
+      message: 'Are you sure you want to delete this visit?',
+      confirmLabel: 'Delete',
+      confirmColor: 'error'
+    })
+    if (!confirmed) return
+
+    try {
+      setDeleting(true)
+      const res = await patientsVisitsDestroy(Number(patientId), Number(visit.id))
+      if (res.status !== 204) {
+        throw new Error((res.data as { message?: string })?.message ?? 'Failed to delete visit.')
+      }
+      window.dispatchEvent(new Event('visits:changed'))
+      notify.success('Visit deleted.')
+      router.push('/visits')
+    } catch (err) {
+      notify.error(err instanceof Error ? err.message : 'Failed to delete visit.')
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   if (editing) {
     return (
       <Card>
-        <CardHeader title='Edit Visit' />
+        <CardHeader
+          title='Edit Visit'
+          action={<PageBackButton size='small' onClick={() => setEditing(false)} label='Cancel' />}
+        />
+        <Divider />
         <CardContent>
           <VisitEditForm
             visit={visit}
@@ -40,18 +79,37 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
   }
 
   return (
-    <Card>
-      <CardHeader
-        title='Visit Details'
-        action={
-          <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
-            Edit
-          </Button>
-        }
-      />
-      <CardContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Box>
+    <>
+      <Card>
+        <CardHeader
+          title='Visit Details'
+          sx={responsiveCardHeaderSx}
+          action={
+            <Box sx={cardHeaderActionsSx}>
+              {isStaff && (
+                <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
+                  Edit
+                </Button>
+              )}
+              {isAdmin && (
+                <Button
+                  size='small'
+                  variant='outlined'
+                  color='error'
+                  startIcon={<i className='tabler-trash' />}
+                  disabled={deleting}
+                  onClick={handleDelete}
+                >
+                  Delete
+                </Button>
+              )}
+              <PageBackButton size='small' onClick={() => router.push('/visits')} />
+            </Box>
+          }
+        />
+        <CardContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Box>
             <Typography variant='body2' color='text.secondary' mb={0.5}>Date</Typography>
             <Typography variant='body1'>{new Date(attributes.date).toLocaleDateString()}</Typography>
           </Box>
@@ -81,8 +139,10 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
               Updated: {new Date(attributes.updatedAt).toLocaleString()}
             </Typography>
           </Box>
-        </Box>
-      </CardContent>
-    </Card>
+          </Box>
+        </CardContent>
+      </Card>
+      <ConfirmDialog />
+    </>
   )
 }

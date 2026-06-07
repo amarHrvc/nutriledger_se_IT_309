@@ -26,11 +26,30 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property-read string|null $medical_notes;
  * @property-read ?Carbon $created_at;
  * @property-read ?Carbon $updated_at;
+ * @property-read ?Carbon $deleted_at;
  * @property-read PatientSocioeconomic|null $socioeconomic;
  * @property-read User|null $user;
  **/
 class PatientResource extends JsonResource
 {
+    /**
+     * @return array<string, mixed>
+     */
+    public function with(Request $request): array
+    {
+        if (! $this->relationLoaded('socioeconomic') || ! $this->socioeconomic) {
+            return [];
+        }
+
+        return [
+            'included' => [
+                'socioeconomic' => [
+                    (new PatientSocioeconomicResource($this->socioeconomic))->resolve(),
+                ],
+            ],
+        ];
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -58,6 +77,7 @@ class PatientResource extends JsonResource
                 'medicalNotes' => $this->medical_notes,
                 'createdAt' => $this->created_at?->toIso8601String(),
                 'updatedAt' => $this->updated_at?->toIso8601String(),
+                'deletedAt' => $this->deleted_at?->toIso8601String(),
             ],
             'relationships' => [
                 'user' => [
@@ -74,6 +94,12 @@ class PatientResource extends JsonResource
                             'id' => (string) $this->socioeconomic->id,
                         ] : null),
                 ],
+            ],
+            'included' => [
+                'socioeconomic' => $this->when(
+                    $this->relationLoaded('socioeconomic') && $this->socioeconomic,
+                    fn () => (new PatientSocioeconomicResource($this->socioeconomic))->resolve()
+                ),
             ],
         ];
     }
