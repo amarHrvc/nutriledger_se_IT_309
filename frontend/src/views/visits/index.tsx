@@ -23,9 +23,12 @@ import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
+import ListPagination from '@/components/ListPagination'
 import { patientsIndex } from '@/api/generated/patient/patient'
 import { patientsVisitsIndex } from '@/api/generated/visit/visit'
 import type { PatientResource, VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { clientPaginationMeta, DEFAULT_PAGE_SIZE } from '@/types/pagination'
 import VisitForm from './VisitForm'
 
 type FlatVisit = {
@@ -39,6 +42,8 @@ export default function VisitsView() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
+  const [page, setPage] = useState(1)
+  const { isPatient, isStaff } = useCurrentUser()
 
   const loadAllVisits = useCallback(async () => {
     try {
@@ -65,6 +70,7 @@ export default function VisitsView() {
         .sort((a, b) => new Date(b.visit.attributes.date).getTime() - new Date(a.visit.attributes.date).getTime())
 
       setFlatVisits(all)
+      setPage(1)
       setError(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load visits.')
@@ -87,6 +93,12 @@ export default function VisitsView() {
     )
   }
 
+  const visitsMeta = clientPaginationMeta(flatVisits.length, page, DEFAULT_PAGE_SIZE)
+  const paginatedVisits = flatVisits.slice(
+    (page - 1) * DEFAULT_PAGE_SIZE,
+    page * DEFAULT_PAGE_SIZE
+  )
+
   if (error) {
     return (
       <Box sx={{ p: 3 }}>
@@ -99,12 +111,14 @@ export default function VisitsView() {
     <>
       <Card>
         <CardHeader
-          title='Visit History'
-          subheader={`${flatVisits.length} visit${flatVisits.length !== 1 ? 's' : ''} total`}
+          title={isPatient ? 'My Visits' : 'Visit History'}
+          subheader={`${visitsMeta.total} visit${visitsMeta.total !== 1 ? 's' : ''} total`}
           action={
-            <Button variant='contained' startIcon={<i className='tabler-plus' />} onClick={() => setCreateOpen(true)}>
-              New Visit
-            </Button>
+            isStaff ? (
+              <Button variant='contained' startIcon={<i className='tabler-plus' />} onClick={() => setCreateOpen(true)}>
+                New Visit
+              </Button>
+            ) : undefined
           }
         />
         <CardContent sx={{ p: 0 }}>
@@ -118,17 +132,17 @@ export default function VisitsView() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Date</TableCell>
-                    <TableCell>Patient</TableCell>
+                    {!isPatient && <TableCell>Patient</TableCell>}
                     <TableCell>Doctor</TableCell>
                     <TableCell>Notes</TableCell>
                     <TableCell align='right'>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {flatVisits.map(({ visit, patient }) => (
+                  {paginatedVisits.map(({ visit, patient }) => (
                     <TableRow key={`${patient.id}-${visit.id}`} hover>
                       <TableCell>{new Date(visit.attributes.date).toLocaleDateString()}</TableCell>
-                      <TableCell>{patient.attributes.fullName}</TableCell>
+                      {!isPatient && <TableCell>{patient.attributes.fullName}</TableCell>}
                       <TableCell>{visit.attributes.doctorName ?? '—'}</TableCell>
                       <TableCell sx={{ maxWidth: 240 }}>
                         <Typography noWrap variant='body2'>{visit.attributes.notes ?? '—'}</Typography>
@@ -146,6 +160,7 @@ export default function VisitsView() {
               </Table>
             </TableContainer>
           )}
+          <ListPagination meta={visitsMeta} onPageChange={setPage} />
         </CardContent>
       </Card>
 

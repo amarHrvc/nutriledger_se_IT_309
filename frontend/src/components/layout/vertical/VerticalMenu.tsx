@@ -1,3 +1,5 @@
+'use client'
+
 // MUI Imports
 import { useTheme } from '@mui/material/styles'
 
@@ -12,6 +14,8 @@ import { Menu, MenuItem } from '@menu/vertical-menu'
 
 // Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { getPatientsNavLabel, PATIENTS_NAV } from '@/utils/patientNav'
 
 // Styled Component Imports
 import StyledVerticalNavExpandIcon from '@menu/styles/vertical/StyledVerticalNavExpandIcon'
@@ -39,6 +43,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
+  const { isPatient, isAdmin } = useCurrentUser()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
@@ -71,10 +76,15 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         <MenuItem href='/home' icon={<i className='tabler-smart-home' />}>
           Home
         </MenuItem>
-        <MenuItem href='/patients' icon={<i className='tabler-users' />}>
-          Patients
+        <MenuItem href='/patients' icon={<i className={PATIENTS_NAV.icon} />}>
+          {getPatientsNavLabel(isPatient)}
         </MenuItem>
-        <MenuItem href='/visits' icon={<i className='tabler-users' />}>
+        {isAdmin && (
+          <MenuItem href='/users' icon={<i className='tabler-user-shield' />}>
+            Users
+          </MenuItem>
+        )}
+        <MenuItem href='/visits' icon={<i className='tabler-calendar-event' />}>
           Visits
         </MenuItem>
         <MenuItem href='/about' icon={<i className='tabler-info-circle' />}>

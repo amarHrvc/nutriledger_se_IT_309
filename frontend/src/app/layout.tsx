@@ -17,8 +17,11 @@ import '@/app/globals.css'
 import '@assets/iconify-icons/generated-icons.css'
 
 export const metadata = {
-  title: 'Nutriledger',
-  description: 'Nutriledger'
+  title: 'Nutri-ledger',
+  description: 'Nutri-ledger',
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }]
+  }
 }
 
 const RootLayout = async (props: ChildrenType) => {

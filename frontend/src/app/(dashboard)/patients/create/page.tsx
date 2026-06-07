@@ -1,23 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
+import CardHeader from '@mui/material/CardHeader'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
+import Divider from '@mui/material/Divider'
 
+import PageBackButton from '@/components/PageBackButton'
+import PageLoader from '@/components/PageLoader'
+import SocioeconomicFormFields from '@/components/SocioeconomicFormFields'
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { notify } from '@/utils/notify'
+import { fetchUnlinkedPatientUsers, type PatientUserOption } from '@/utils/unlinkedPatientUsers'
+import {
+  buildSocioeconomicPayload,
+  emptySocioeconomicForm,
+  type SocioeconomicFormData
+} from '@/utils/socioeconomic'
 
 export default function CreatePatientPage() {
   const router = useRouter()
+  const { isPatient, ready } = useCurrentUser()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]> | null>(null)
+  const [eligibleUsers, setEligibleUsers] = useState<PatientUserOption[]>([])
+  const [usersLoading, setUsersLoading] = useState(true)
+  const [usersError, setUsersError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     user_id: '',
@@ -35,11 +51,48 @@ export default function CreatePatientPage() {
     allergies: '',
     medical_notes: ''
   })
+  const [socioForm, setSocioForm] = useState<SocioeconomicFormData>(emptySocioeconomicForm())
+
+  useEffect(() => {
+    if (ready && isPatient) {
+      router.replace('/patients')
+    }
+  }, [ready, isPatient, router])
+
+  useEffect(() => {
+    if (!ready || isPatient) return
+
+    const loadUsers = async () => {
+      try {
+        setUsersLoading(true)
+        setEligibleUsers(await fetchUnlinkedPatientUsers())
+        setUsersError(null)
+      } catch (err) {
+        setUsersError(err instanceof ApiError ? err.message : 'Failed to load patient accounts')
+      } finally {
+        setUsersLoading(false)
+      }
+    }
+
+    loadUsers()
+  }, [ready, isPatient])
+
+  if (!ready || isPatient) {
+    return <PageLoader />
+  }
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (fieldErrors?.[field]) {
       setFieldErrors(prev => prev ? { ...prev, [field]: undefined } : null)
+    }
+  }
+
+  const handleSocioChange = (field: keyof SocioeconomicFormData, value: string) => {
+    setSocioForm(prev => ({ ...prev, [field]: value }))
+    const apiKey = `socioeconomic.${field}`
+    if (fieldErrors?.[apiKey]) {
+      setFieldErrors(prev => prev ? { ...prev, [apiKey]: undefined } : null)
     }
   }
 
@@ -50,7 +103,14 @@ export default function CreatePatientPage() {
     setIsSubmitting(true)
 
     try {
-      await client.post('api/patients', formData)
+      const socioeconomic = buildSocioeconomicPayload(socioForm)
+
+      await client.post('api/patients', {
+        ...formData,
+        user_id: Number(formData.user_id),
+        ...(socioeconomic ? { socioeconomic } : {})
+      })
+      notify.success('Patient created successfully.')
       router.push('/patients')
     } catch (err) {
       if (err instanceof ApiError) {
@@ -70,26 +130,48 @@ export default function CreatePatientPage() {
 
   return (
     <Card>
-      <CardContent>
-        <Typography variant='h5' className='mb-6'>
-          Create New Patient
-        </Typography>
-
+      <CardHeader
+        title='Create New Patient'
+        action={
+          <PageBackButton onClick={() => router.push('/patients')} disabled={isSubmitting} />
+        }
+      />
+      <Divider />
+      <CardContent sx={{ pt: 4 }}>
         {error && <Alert severity='error' className='mb-4'>{error}</Alert>}
+        {usersError && <Alert severity='error' className='mb-4'>{usersError}</Alert>}
+        {!usersLoading && eligibleUsers.length === 0 && !usersError && (
+          <Alert severity='info' className='mb-4'>
+            No patient accounts without a medical record. Add a user with the Patient role first.
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                label='User ID'
-                type='number'
+                label='Patient account'
+                select
                 value={formData.user_id}
                 onChange={e => handleChange('user_id', e.target.value)}
                 error={!!fieldErrors?.user_id}
-                helperText={fieldErrors?.user_id?.[0]}
+                helperText={fieldErrors?.user_id?.[0] || 'Link this record to an existing patient login'}
                 required
-              />
+                disabled={usersLoading || eligibleUsers.length === 0}
+                slotProps={{
+                  select: {
+                    native: true
+                  }
+                }}
+              >
+                <option value=''>{usersLoading ? 'Loading accounts...' : 'Select patient account'}</option>
+                {eligibleUsers.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.name} ({user.email})
+                  </option>
+                ))}
+              </CustomTextField>
             </Grid>
             <Grid item xs={12} sm={6}>
               <CustomTextField
@@ -260,11 +342,25 @@ export default function CreatePatientPage() {
               />
             </Grid>
             <Grid item xs={12}>
+              <Divider className='mb-4' />
+              <Typography variant='h6' className='mb-4'>
+                Socioeconomic Information
+              </Typography>
+              <Typography variant='body2' color='text.secondary' className='mb-4'>
+                Optional — employment, lifestyle, and food security factors that support care planning.
+              </Typography>
+              <SocioeconomicFormFields
+                formData={socioForm}
+                onChange={handleSocioChange}
+                fieldErrors={fieldErrors}
+              />
+            </Grid>
+            <Grid item xs={12}>
               <div className='flex gap-4'>
                 <Button
                   variant='contained'
                   type='submit'
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || usersLoading || eligibleUsers.length === 0}
                   startIcon={isSubmitting ? <CircularProgress size={18} /> : <i className='tabler-check' />}
                 >
                   {isSubmitting ? 'Creating...' : 'Create Patient'}

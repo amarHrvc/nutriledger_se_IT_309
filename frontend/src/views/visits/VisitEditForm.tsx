@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { toast } from 'react-toastify'
+import { notify } from '@/utils/notify'
 
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
@@ -58,7 +58,7 @@ export default function VisitEditForm({ visit, patientId, onSuccess, onCancel }:
 				return
 			}
 			window.dispatchEvent(new CustomEvent('visits:changed'))
-			toast.success('Visit updated successfully.')
+			notify.success('Visit updated successfully.')
 			onSuccess?.()
 		} catch {
 			setFormError('Failed to update visit.')
