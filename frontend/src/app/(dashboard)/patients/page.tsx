@@ -18,11 +18,13 @@ import Alert from '@mui/material/Alert'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 
+import ListPagination from '@/components/ListPagination'
 import PageLoader from '@/components/PageLoader'
 import { client, ApiError } from '@/api/client'
 import { useConfirm } from '@/hooks/useConfirm'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { notify } from '@/utils/notify'
+import { buildPageQuery, type PaginationMeta, type PaginatedResponse } from '@/types/pagination'
 
 type PatientAttributes = {
   firstName: string
@@ -50,13 +52,7 @@ type PatientResource = {
   relationships: any
 }
 
-type PatientListResponse = {
-  message: string
-  status: number
-  data: PatientResource[]
-  meta?: any
-  links?: any
-}
+type PatientListResponse = PaginatedResponse<PatientResource>
 
 function MyRecordCard({ patient, onView }: { patient: PatientResource; onView: () => void }) {
   const { attributes } = patient
@@ -114,21 +110,24 @@ export default function PatientsPage() {
   const [patients, setPatients] = useState<PatientResource[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const router = useRouter()
   const { isPatient, isStaff, ready } = useCurrentUser()
   const { confirm, ConfirmDialog } = useConfirm()
 
   useEffect(() => {
     if (ready) {
-      loadPatients()
+      loadPatients(page)
     }
-  }, [ready])
+  }, [ready, page])
 
-  const loadPatients = async () => {
+  const loadPatients = async (pageNum: number) => {
     try {
       setLoading(true)
-      const res = await client.get<PatientListResponse>('api/patients')
+      const res = await client.get<PatientListResponse>(`api/patients?${buildPageQuery(pageNum)}`)
       setPatients(res.data)
+      setMeta(res.meta ?? null)
       setError(null)
     } catch (err) {
       if (err instanceof ApiError) {
@@ -152,8 +151,12 @@ export default function PatientsPage() {
 
     try {
       await client.delete(`api/patients/${id}`)
-      setPatients(patients.filter(p => p.id !== id))
       notify.success('Patient deleted.')
+      if (patients.length === 1 && page > 1) {
+        setPage(page - 1)
+      } else {
+        await loadPatients(page)
+      }
     } catch (err) {
       notify.error(err instanceof ApiError ? err.message : 'Failed to delete patient')
     }
@@ -260,6 +263,13 @@ export default function PatientsPage() {
                 </TableBody>
               </Table>
             </TableContainer>
+          )}
+          {meta && (
+            <ListPagination
+              meta={meta}
+              onPageChange={setPage}
+              disabled={loading}
+            />
           )}
         </CardContent>
       </Card>

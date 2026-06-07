@@ -165,7 +165,7 @@ export default function EditUserPage() {
           <Box sx={{ mb: 5 }}>
             <SectionTitle>Account Details</SectionTitle>
             <Grid container spacing={4}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <CustomTextField
                   fullWidth
                   label='Full Name'
@@ -175,7 +175,7 @@ export default function EditUserPage() {
                   {...fe('name')}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <CustomTextField
                   fullWidth
                   label='Email'
@@ -186,7 +186,7 @@ export default function EditUserPage() {
                   {...fe('email')}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <CustomTextField
                   fullWidth
                   label='Role'
@@ -210,7 +210,7 @@ export default function EditUserPage() {
           <Box sx={{ mb: 5 }}>
             <SectionTitle>Change Password (optional)</SectionTitle>
             <Grid container spacing={4}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <CustomTextField
                   fullWidth
                   label='New Password'

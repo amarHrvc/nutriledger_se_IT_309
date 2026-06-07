@@ -16,8 +16,12 @@ import themeConfig from '@configs/themeConfig'
 const capabilities = [
   'Secure login with role-based access for administrators, doctors, and patients',
   'Centralized patient profiles including health details and contact information',
-  'Socioeconomic data tracking to support nutrition and care planning',
-  'Visit history for documenting encounters and follow-ups over time'
+  'Visit history for documenting encounters and follow-ups over time',
+  'User management for administrators (create and manage staff accounts)'
+]
+
+const plannedCapabilities = [
+  'Socioeconomic data tracking to support nutrition and care planning'
 ]
 
 export default function Page() {
@@ -33,7 +37,7 @@ export default function Page() {
         </div>
       </Grid>
 
-      <Grid size={{ xs: 12, md: 8 }}>
+      <Grid size={{ xs: 12 }}>
         <Card>
           <CardContent className='p-6 md:p-8'>
             <Typography variant='h5' className='mb-4'>
@@ -41,8 +45,9 @@ export default function Page() {
             </Typography>
             <Typography color='text.secondary' className='mb-4' paragraph>
               Nutri-ledger is a web application built for clinics that need a single place to manage patient
-              nutrition-related records. It helps staff keep track of who they are caring for, what socioeconomic
-              factors may affect treatment, and when patients have been seen.
+              nutrition-related records. It helps staff keep track of who they are caring for and when patients
+              have been seen. Socioeconomic factors that affect nutrition and care planning are part of the product
+              vision and are planned for a future release.
             </Typography>
             <Typography color='text.secondary' className='mb-4' paragraph>
               Doctors and administrators can create and update patient records, log visits, and review history from
@@ -57,26 +62,7 @@ export default function Page() {
         </Card>
       </Grid>
 
-      <Grid size={{ xs: 12, md: 4 }}>
-        <Card className='bs-full'>
-          <CardContent className='p-6'>
-            <Typography variant='h6' className='mb-4'>
-              Key capabilities
-            </Typography>
-            <Divider className='mb-4' />
-            <List disablePadding>
-              {capabilities.map(item => (
-                <ListItem key={item} disableGutters className='py-2 items-start'>
-                  <ListItemIcon className='min-is-8 mt-1'>
-                    <i className='tabler-check text-success' />
-                  </ListItemIcon>
-                  <ListItemText primary={item} primaryTypographyProps={{ variant: 'body2' }} />
-                </ListItem>
-              ))}
-            </List>
-          </CardContent>
-        </Card>
-      </Grid>
+      
     </Grid>
   )
 }

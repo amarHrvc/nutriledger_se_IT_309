@@ -20,6 +20,7 @@ import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
+import ListPagination from '@/components/ListPagination'
 import PageLoader from '@/components/PageLoader'
 import { client, ApiError } from '@/api/client'
 import type { UserResource } from '@/api/generated/nutriBaseAPI.schemas'
@@ -27,12 +28,9 @@ import { useConfirm } from '@/hooks/useConfirm'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { notify } from '@/utils/notify'
 import { roleColor, roleLabel } from '@/utils/userRole'
+import { buildPageQuery, type PaginatedResponse, type PaginationMeta } from '@/types/pagination'
 
-type UserListResponse = {
-  message: string
-  status: number
-  data: UserResource[]
-}
+type UserListResponse = PaginatedResponse<UserResource>
 
 export default function UsersPage() {
   const router = useRouter()
@@ -41,6 +39,8 @@ export default function UsersPage() {
   const [users, setUsers] = useState<UserResource[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
 
   useEffect(() => {
     if (ready && !isAdmin) {
@@ -50,15 +50,16 @@ export default function UsersPage() {
 
   useEffect(() => {
     if (ready && isAdmin) {
-      loadUsers()
+      loadUsers(page)
     }
-  }, [ready, isAdmin])
+  }, [ready, isAdmin, page])
 
-  const loadUsers = async () => {
+  const loadUsers = async (pageNum: number) => {
     try {
       setLoading(true)
-      const res = await client.get<UserListResponse>('api/users')
+      const res = await client.get<UserListResponse>(`api/users?${buildPageQuery(pageNum)}`)
       setUsers(res.data)
+      setMeta(res.meta ?? null)
       setError(null)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to load users')
@@ -79,7 +80,11 @@ export default function UsersPage() {
     try {
       await client.delete(`api/users/${id}`)
       notify.success('User deactivated.')
-      await loadUsers()
+      if (users.length === 1 && page > 1) {
+        setPage(page - 1)
+      } else {
+        await loadUsers(page)
+      }
     } catch (err) {
       notify.error(err instanceof ApiError ? err.message : 'Failed to deactivate user')
     }
@@ -97,7 +102,7 @@ export default function UsersPage() {
     try {
       await client.post(`api/users/${id}/restore`, {})
       notify.success('User restored.')
-      await loadUsers()
+      await loadUsers(page)
     } catch (err) {
       notify.error(err instanceof ApiError ? err.message : 'Failed to restore user')
     }
@@ -115,7 +120,11 @@ export default function UsersPage() {
     try {
       await client.delete(`api/users/${id}/force`)
       notify.success('User permanently deleted.')
-      await loadUsers()
+      if (users.length === 1 && page > 1) {
+        setPage(page - 1)
+      } else {
+        await loadUsers(page)
+      }
     } catch (err) {
       notify.error(err instanceof ApiError ? err.message : 'Failed to delete user')
     }
@@ -125,14 +134,12 @@ export default function UsersPage() {
     return <PageLoader />
   }
 
-  const activeCount = users.filter(u => !u.attributes.deletedAt).length
-
   return (
     <>
       <Card>
         <CardHeader
           title='Users'
-          subheader={`${activeCount} active · ${users.length} total`}
+          subheader={meta ? `${meta.total} users total` : undefined}
           action={
             <Button
               variant='contained'
@@ -256,6 +263,13 @@ export default function UsersPage() {
                 </TableBody>
               </Table>
             </TableContainer>
+          )}
+          {meta && (
+            <ListPagination
+              meta={meta}
+              onPageChange={setPage}
+              disabled={loading}
+            />
           )}
         </CardContent>
       </Card>

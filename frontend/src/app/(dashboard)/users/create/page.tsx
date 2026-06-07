@@ -98,7 +98,7 @@ export default function CreateUserPage() {
 
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <CustomTextField
                 fullWidth
                 label='Full Name'
@@ -109,7 +109,7 @@ export default function CreateUserPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <CustomTextField
                 fullWidth
                 label='Email'
@@ -121,7 +121,7 @@ export default function CreateUserPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <CustomTextField
                 fullWidth
                 label='Role'
@@ -138,8 +138,7 @@ export default function CreateUserPage() {
                 <option value='pacijent'>Patient</option>
               </CustomTextField>
             </Grid>
-            <Grid item xs={12} sm={6} />
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <CustomTextField
                 fullWidth
                 label='Password'
@@ -151,7 +150,7 @@ export default function CreateUserPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <CustomTextField
                 fullWidth
                 label='Confirm Password'
@@ -163,7 +162,7 @@ export default function CreateUserPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Box sx={{ display: 'flex', gap: 3 }}>
                 <Button
                   variant='contained'

@@ -15,6 +15,7 @@ import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { notify } from '@/utils/notify'
+import { fetchUnlinkedPatientUsers, type PatientUserOption } from '@/utils/unlinkedPatientUsers'
 
 export default function CreatePatientPage() {
   const router = useRouter()
@@ -22,6 +23,9 @@ export default function CreatePatientPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]> | null>(null)
+  const [eligibleUsers, setEligibleUsers] = useState<PatientUserOption[]>([])
+  const [usersLoading, setUsersLoading] = useState(true)
+  const [usersError, setUsersError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     user_id: '',
@@ -46,6 +50,24 @@ export default function CreatePatientPage() {
     }
   }, [ready, isPatient, router])
 
+  useEffect(() => {
+    if (!ready || isPatient) return
+
+    const loadUsers = async () => {
+      try {
+        setUsersLoading(true)
+        setEligibleUsers(await fetchUnlinkedPatientUsers())
+        setUsersError(null)
+      } catch (err) {
+        setUsersError(err instanceof ApiError ? err.message : 'Failed to load patient accounts')
+      } finally {
+        setUsersLoading(false)
+      }
+    }
+
+    loadUsers()
+  }, [ready, isPatient])
+
   if (!ready || isPatient) {
     return <PageLoader />
   }
@@ -64,7 +86,10 @@ export default function CreatePatientPage() {
     setIsSubmitting(true)
 
     try {
-      await client.post('api/patients', formData)
+      await client.post('api/patients', {
+        ...formData,
+        user_id: Number(formData.user_id)
+      })
       notify.success('Patient created successfully.')
       router.push('/patients')
     } catch (err) {
@@ -91,20 +116,39 @@ export default function CreatePatientPage() {
         </Typography>
 
         {error && <Alert severity='error' className='mb-4'>{error}</Alert>}
+        {usersError && <Alert severity='error' className='mb-4'>{usersError}</Alert>}
+        {!usersLoading && eligibleUsers.length === 0 && !usersError && (
+          <Alert severity='info' className='mb-4'>
+            No patient accounts without a medical record. Add a user with the Patient role first.
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
-                label='User ID'
-                type='number'
+                label='Patient account'
+                select
                 value={formData.user_id}
                 onChange={e => handleChange('user_id', e.target.value)}
                 error={!!fieldErrors?.user_id}
-                helperText={fieldErrors?.user_id?.[0]}
+                helperText={fieldErrors?.user_id?.[0] || 'Link this record to an existing patient login'}
                 required
-              />
+                disabled={usersLoading || eligibleUsers.length === 0}
+                slotProps={{
+                  select: {
+                    native: true
+                  }
+                }}
+              >
+                <option value=''>{usersLoading ? 'Loading accounts...' : 'Select patient account'}</option>
+                {eligibleUsers.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.name} ({user.email})
+                  </option>
+                ))}
+              </CustomTextField>
             </Grid>
             <Grid item xs={12} sm={6}>
               <CustomTextField
@@ -279,7 +323,7 @@ export default function CreatePatientPage() {
                 <Button
                   variant='contained'
                   type='submit'
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || usersLoading || eligibleUsers.length === 0}
                   startIcon={isSubmitting ? <CircularProgress size={18} /> : <i className='tabler-check' />}
                 >
                   {isSubmitting ? 'Creating...' : 'Create Patient'}
