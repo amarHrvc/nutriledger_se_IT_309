@@ -14,9 +14,11 @@ import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 
+import PageLoader from '@/components/PageLoader'
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { notify } from '@/utils/notify'
 
 type PatientAttributes = {
   firstName: string; lastName: string; fullName: string; dateOfBirth: string; gender: string
@@ -98,6 +100,7 @@ export default function EditPatientPage() {
     setError(null); setFieldErrors(null); setIsSubmitting(true)
     try {
       await client.put(`api/patients/${id}`, formData)
+      notify.success('Patient updated successfully.')
       router.push(`/patients/${id}`)
     } catch (err) {
       if (err instanceof ApiError) {
@@ -116,11 +119,7 @@ export default function EditPatientPage() {
   }
 
   if (!ready || isPatient || loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-        <CircularProgress />
-      </Box>
-    )
+    return <PageLoader />
   }
 
   return (

@@ -42,7 +42,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
-  const { isPatient } = useCurrentUser()
+  const { isPatient, isAdmin } = useCurrentUser()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
@@ -78,6 +78,11 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         <MenuItem href='/patients' icon={<i className='tabler-users' />}>
           {isPatient ? 'My Record' : 'Patients'}
         </MenuItem>
+        {isAdmin && (
+          <MenuItem href='/users' icon={<i className='tabler-user-shield' />}>
+            Users
+          </MenuItem>
+        )}
         <MenuItem href='/visits' icon={<i className='tabler-calendar-event' />}>
           Visits
         </MenuItem>

@@ -16,6 +16,7 @@ import TextField from '@mui/material/TextField'
 import { patientsIndex } from '@/api/generated/patient/patient'
 import { patientsVisitsStore } from '@/api/generated/visit/visit'
 import type { PatientResource } from '@/api/generated/nutriBaseAPI.schemas'
+import { notify } from '@/utils/notify'
 
 interface Patient {
 	id: string
@@ -109,6 +110,7 @@ return
 				return
 			}
 			window.dispatchEvent(new CustomEvent('visits:changed'))
+			notify.success('Visit created successfully.')
 			onSuccess?.()
 		} catch {
 			setFormError('Failed to create visit.')

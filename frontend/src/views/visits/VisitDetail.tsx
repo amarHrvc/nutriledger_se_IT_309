@@ -13,7 +13,9 @@ import Typography from '@mui/material/Typography'
 
 import { patientsVisitsDestroy } from '@/api/generated/visit/visit'
 import type { VisitResource } from '@/api/generated/nutriBaseAPI.schemas'
+import { useConfirm } from '@/hooks/useConfirm'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { notify } from '@/utils/notify'
 import VisitEditForm from './VisitEditForm'
 
 type Props = {
@@ -26,24 +28,30 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
   const router = useRouter()
   const [editing, setEditing] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
   const { attributes } = visit
-  const { isAdmin, isPatient, isStaff } = useCurrentUser()
+  const { isAdmin, isStaff } = useCurrentUser()
+  const { confirm, ConfirmDialog } = useConfirm()
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this visit?')) return
+    const confirmed = await confirm({
+      title: 'Delete visit',
+      message: 'Are you sure you want to delete this visit?',
+      confirmLabel: 'Delete',
+      confirmColor: 'error'
+    })
+    if (!confirmed) return
 
     try {
       setDeleting(true)
-      setDeleteError(null)
       const res = await patientsVisitsDestroy(Number(patientId), Number(visit.id))
       if (res.status !== 204) {
         throw new Error((res.data as { message?: string })?.message ?? 'Failed to delete visit.')
       }
       window.dispatchEvent(new Event('visits:changed'))
+      notify.success('Visit deleted.')
       router.push('/visits')
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete visit.')
+      notify.error(err instanceof Error ? err.message : 'Failed to delete visit.')
     } finally {
       setDeleting(false)
     }
@@ -66,39 +74,35 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
   }
 
   return (
-    <Card>
-      <CardHeader
-        title='Visit Details'
-        action={
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            {isStaff && (
-              <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
-                Edit
-              </Button>
-            )}
-            {isAdmin && (
-              <Button
-                size='small'
-                variant='outlined'
-                color='error'
-                startIcon={<i className='tabler-trash' />}
-                disabled={deleting}
-                onClick={handleDelete}
-              >
-                Delete
-              </Button>
-            )}
-          </Box>
-        }
-      />
-      <CardContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {deleteError && (
-            <Typography variant='body2' color='error'>
-              {deleteError}
-            </Typography>
-          )}
-          <Box>
+    <>
+      <Card>
+        <CardHeader
+          title='Visit Details'
+          action={
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {isStaff && (
+                <Button size='small' variant='outlined' startIcon={<i className='tabler-edit' />} onClick={() => setEditing(true)}>
+                  Edit
+                </Button>
+              )}
+              {isAdmin && (
+                <Button
+                  size='small'
+                  variant='outlined'
+                  color='error'
+                  startIcon={<i className='tabler-trash' />}
+                  disabled={deleting}
+                  onClick={handleDelete}
+                >
+                  Delete
+                </Button>
+              )}
+            </Box>
+          }
+        />
+        <CardContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Box>
             <Typography variant='body2' color='text.secondary' mb={0.5}>Date</Typography>
             <Typography variant='body1'>{new Date(attributes.date).toLocaleDateString()}</Typography>
           </Box>
@@ -128,8 +132,10 @@ export default function VisitDetail({ visit, patientId, onUpdated }: Props) {
               Updated: {new Date(attributes.updatedAt).toLocaleString()}
             </Typography>
           </Box>
-        </Box>
-      </CardContent>
-    </Card>
+          </Box>
+        </CardContent>
+      </Card>
+      <ConfirmDialog />
+    </>
   )
 }

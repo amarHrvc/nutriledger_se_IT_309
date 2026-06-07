@@ -10,9 +10,11 @@ import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
 
+import PageLoader from '@/components/PageLoader'
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { notify } from '@/utils/notify'
 
 export default function CreatePatientPage() {
   const router = useRouter()
@@ -45,11 +47,7 @@ export default function CreatePatientPage() {
   }, [ready, isPatient, router])
 
   if (!ready || isPatient) {
-    return (
-      <div className='flex justify-center items-center min-h-[400px]'>
-        <CircularProgress />
-      </div>
-    )
+    return <PageLoader />
   }
 
   const handleChange = (field: string, value: string) => {
@@ -67,6 +65,7 @@ export default function CreatePatientPage() {
 
     try {
       await client.post('api/patients', formData)
+      notify.success('Patient created successfully.')
       router.push('/patients')
     } catch (err) {
       if (err instanceof ApiError) {
