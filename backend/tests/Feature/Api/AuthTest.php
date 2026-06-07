@@ -117,6 +117,43 @@ test('GET /api/user without token returns 401', function () {
     $this->getJson('/api/user')->assertUnauthorized();
 });
 
+test('authenticated user can change password', function () {
+    $user = User::factory()->create(['password' => bcrypt('oldpassword')]);
+
+    $this->actingAs($user)
+        ->putJson('/api/user/password', [
+            'current_password' => 'oldpassword',
+            'password' => 'newpassword1',
+            'password_confirmation' => 'newpassword1',
+        ])
+        ->assertOk()
+        ->assertJsonPath('message', 'Password updated successfully.');
+
+    $user->refresh();
+    expect(\Illuminate\Support\Facades\Hash::check('newpassword1', $user->password))->toBeTrue();
+});
+
+test('change password rejects wrong current password', function () {
+    $user = User::factory()->create(['password' => bcrypt('oldpassword')]);
+
+    $this->actingAs($user)
+        ->putJson('/api/user/password', [
+            'current_password' => 'wrongpassword',
+            'password' => 'newpassword1',
+            'password_confirmation' => 'newpassword1',
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['current_password']);
+});
+
+test('change password requires authentication', function () {
+    $this->putJson('/api/user/password', [
+        'current_password' => 'oldpassword',
+        'password' => 'newpassword1',
+        'password_confirmation' => 'newpassword1',
+    ])->assertUnauthorized();
+});
+
 test('login token expiration uses config sanctum.expiration', function () {
     $expirationMinutes = 2880;
     config(['sanctum.expiration' => $expirationMinutes]);

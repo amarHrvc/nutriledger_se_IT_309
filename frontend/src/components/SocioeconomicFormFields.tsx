@@ -152,7 +152,7 @@ export default function SocioeconomicFormFields({ formData, onChange, fieldError
           <SelectField
             label='Health insurance'
             field='has_health_insurance'
-            options={BOOL_OPTIONS.map(([value, label]) => [value, label] as const)}
+            options={BOOL_OPTIONS}
             formData={formData}
             onChange={onChange}
             fieldErrors={fieldErrors}
@@ -162,7 +162,7 @@ export default function SocioeconomicFormFields({ formData, onChange, fieldError
           <SelectField
             label='Family support'
             field='has_family_support'
-            options={BOOL_OPTIONS.map(([value, label]) => [value, label] as const)}
+            options={BOOL_OPTIONS}
             formData={formData}
             onChange={onChange}
             fieldErrors={fieldErrors}
@@ -172,7 +172,7 @@ export default function SocioeconomicFormFields({ formData, onChange, fieldError
           <SelectField
             label='Has caregiver'
             field='has_caregiver'
-            options={BOOL_OPTIONS.map(([value, label]) => [value, label] as const)}
+            options={BOOL_OPTIONS}
             formData={formData}
             onChange={onChange}
             fieldErrors={fieldErrors}

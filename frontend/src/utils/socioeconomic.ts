@@ -58,30 +58,69 @@ export const emptySocioeconomicForm = (): SocioeconomicFormData => ({
   additional_notes: ''
 })
 
+/** Maps legacy DB/seed values to canonical form option values. */
+const LEGACY_TO_CANONICAL: Partial<Record<keyof SocioeconomicFormData, Record<string, string>>> = {
+  education_level: {
+    bachelor: 'bachelors',
+    master: 'masters'
+  },
+  food_security_status: {
+    secure: 'food_secure',
+    at_risk: 'marginally_secure',
+    insecure: 'food_insecure'
+  },
+  physical_activity_level: {
+    light: 'lightly_active',
+    moderate: 'moderately_active',
+    active: 'very_active'
+  },
+  smoking_status: {
+    current: 'current_light'
+  },
+  living_arrangement: {
+    shared: 'shared_housing',
+    institution: 'care_facility'
+  },
+  employment_status: {
+    disabled: 'unable_to_work'
+  },
+  transportation_access: {
+    family: 'limited'
+  },
+  marital_status: {
+    partnered: 'other'
+  }
+}
+
+function normalizeFormValue(field: keyof SocioeconomicFormData, value: string | null | undefined): string {
+  if (!value) return ''
+  return LEGACY_TO_CANONICAL[field]?.[value] ?? value
+}
+
 export function socioeconomicFromAttributes(
   attrs?: SocioeconomicAttributes | null
 ): SocioeconomicFormData {
   if (!attrs) return emptySocioeconomicForm()
 
   return {
-    marital_status: attrs.maritalStatus ?? '',
+    marital_status: normalizeFormValue('marital_status', attrs.maritalStatus),
     number_of_dependents:
       attrs.numberOfDependents !== null && attrs.numberOfDependents !== undefined
         ? String(attrs.numberOfDependents)
         : '',
-    living_arrangement: attrs.livingArrangement ?? '',
-    employment_status: attrs.employmentStatus ?? '',
+    living_arrangement: normalizeFormValue('living_arrangement', attrs.livingArrangement),
+    employment_status: normalizeFormValue('employment_status', attrs.employmentStatus),
     occupation: attrs.occupation ?? '',
-    income_level: attrs.incomeLevel ?? '',
+    income_level: normalizeFormValue('income_level', attrs.incomeLevel),
     has_health_insurance: boolToSelect(attrs.hasHealthInsurance),
-    education_level: attrs.educationLevel ?? '',
-    smoking_status: attrs.smokingStatus ?? '',
-    alcohol_consumption: attrs.alcoholConsumption ?? '',
-    physical_activity_level: attrs.physicalActivityLevel ?? '',
+    education_level: normalizeFormValue('education_level', attrs.educationLevel),
+    smoking_status: normalizeFormValue('smoking_status', attrs.smokingStatus),
+    alcohol_consumption: normalizeFormValue('alcohol_consumption', attrs.alcoholConsumption),
+    physical_activity_level: normalizeFormValue('physical_activity_level', attrs.physicalActivityLevel),
     has_family_support: boolToSelect(attrs.hasFamilySupport),
     has_caregiver: boolToSelect(attrs.hasCaregiver),
-    transportation_access: attrs.transportationAccess ?? '',
-    food_security_status: attrs.foodSecurityStatus ?? '',
+    transportation_access: normalizeFormValue('transportation_access', attrs.transportationAccess),
+    food_security_status: normalizeFormValue('food_security_status', attrs.foodSecurityStatus),
     dietary_restrictions_cultural: attrs.dietaryRestrictionsCultural ?? '',
     additional_notes: attrs.additionalNotes ?? ''
   }
@@ -155,10 +194,9 @@ export function formatSocioeconomicLabel(
 }
 
 export const BOOL_OPTIONS = [
-  { value: '', label: 'Not specified' },
-  { value: 'true', label: 'Yes' },
-  { value: 'false', label: 'No' }
-]
+  ['true', 'Yes'],
+  ['false', 'No']
+] as const
 
 export const SOCIOECONOMIC_LABELS = {
   marital_status: {
@@ -200,7 +238,9 @@ export const SOCIOECONOMIC_LABELS = {
     secondary: 'Secondary',
     vocational: 'Vocational',
     bachelors: "Bachelor's",
+    bachelor: "Bachelor's",
     masters: "Master's",
+    master: "Master's",
     doctorate: 'Doctorate',
     other: 'Other'
   },
@@ -232,8 +272,11 @@ export const SOCIOECONOMIC_LABELS = {
   },
   food_security_status: {
     food_secure: 'Food secure',
+    secure: 'Food secure',
     marginally_secure: 'Marginally secure',
+    at_risk: 'Marginally secure',
     food_insecure: 'Food insecure',
+    insecure: 'Food insecure',
     severely_insecure: 'Severely insecure'
   }
 } as const
