@@ -121,7 +121,8 @@ it('allows admin to view single patient with socioeconomic', function () {
             ],
         ])
         ->assertJsonPath('data.patient.type', 'patient')
-        ->assertJsonPath('data.patient.id', (string) $patient->id);
+        ->assertJsonPath('data.patient.id', (string) $patient->id)
+        ->assertJsonPath('data.patient.included.socioeconomic.attributes.employmentStatus', $patient->socioeconomic->employment_status);
 });
 
 // T016

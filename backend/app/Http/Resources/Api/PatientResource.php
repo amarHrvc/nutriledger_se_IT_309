@@ -33,6 +33,24 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class PatientResource extends JsonResource
 {
     /**
+     * @return array<string, mixed>
+     */
+    public function with(Request $request): array
+    {
+        if (! $this->relationLoaded('socioeconomic') || ! $this->socioeconomic) {
+            return [];
+        }
+
+        return [
+            'included' => [
+                'socioeconomic' => [
+                    (new PatientSocioeconomicResource($this->socioeconomic))->resolve(),
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
@@ -76,6 +94,12 @@ class PatientResource extends JsonResource
                             'id' => (string) $this->socioeconomic->id,
                         ] : null),
                 ],
+            ],
+            'included' => [
+                'socioeconomic' => $this->when(
+                    $this->relationLoaded('socioeconomic') && $this->socioeconomic,
+                    fn () => (new PatientSocioeconomicResource($this->socioeconomic))->resolve()
+                ),
             ],
         ];
     }

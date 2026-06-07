@@ -15,6 +15,7 @@ import { Menu, MenuItem } from '@menu/vertical-menu'
 // Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { getPatientsNavLabel, PATIENTS_NAV } from '@/utils/patientNav'
 
 // Styled Component Imports
 import StyledVerticalNavExpandIcon from '@menu/styles/vertical/StyledVerticalNavExpandIcon'
@@ -75,8 +76,8 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         <MenuItem href='/home' icon={<i className='tabler-smart-home' />}>
           Home
         </MenuItem>
-        <MenuItem href='/patients' icon={<i className='tabler-users' />}>
-          {isPatient ? 'My Record' : 'Patients'}
+        <MenuItem href='/patients' icon={<i className={PATIENTS_NAV.icon} />}>
+          {getPatientsNavLabel(isPatient)}
         </MenuItem>
         {isAdmin && (
           <MenuItem href='/users' icon={<i className='tabler-user-shield' />}>

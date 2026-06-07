@@ -9,13 +9,20 @@ import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
+import Divider from '@mui/material/Divider'
 
 import PageLoader from '@/components/PageLoader'
+import SocioeconomicFormFields from '@/components/SocioeconomicFormFields'
 import CustomTextField from '@core/components/mui/TextField'
 import { client, ApiError } from '@/api/client'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { notify } from '@/utils/notify'
 import { fetchUnlinkedPatientUsers, type PatientUserOption } from '@/utils/unlinkedPatientUsers'
+import {
+  buildSocioeconomicPayload,
+  emptySocioeconomicForm,
+  type SocioeconomicFormData
+} from '@/utils/socioeconomic'
 
 export default function CreatePatientPage() {
   const router = useRouter()
@@ -43,6 +50,7 @@ export default function CreatePatientPage() {
     allergies: '',
     medical_notes: ''
   })
+  const [socioForm, setSocioForm] = useState<SocioeconomicFormData>(emptySocioeconomicForm())
 
   useEffect(() => {
     if (ready && isPatient) {
@@ -79,6 +87,14 @@ export default function CreatePatientPage() {
     }
   }
 
+  const handleSocioChange = (field: keyof SocioeconomicFormData, value: string) => {
+    setSocioForm(prev => ({ ...prev, [field]: value }))
+    const apiKey = `socioeconomic.${field}`
+    if (fieldErrors?.[apiKey]) {
+      setFieldErrors(prev => prev ? { ...prev, [apiKey]: undefined } : null)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -86,9 +102,12 @@ export default function CreatePatientPage() {
     setIsSubmitting(true)
 
     try {
+      const socioeconomic = buildSocioeconomicPayload(socioForm)
+
       await client.post('api/patients', {
         ...formData,
-        user_id: Number(formData.user_id)
+        user_id: Number(formData.user_id),
+        ...(socioeconomic ? { socioeconomic } : {})
       })
       notify.success('Patient created successfully.')
       router.push('/patients')
@@ -316,6 +335,20 @@ export default function CreatePatientPage() {
                 onChange={e => handleChange('medical_notes', e.target.value)}
                 error={!!fieldErrors?.medical_notes}
                 helperText={fieldErrors?.medical_notes?.[0]}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Divider className='mb-4' />
+              <Typography variant='h6' className='mb-4'>
+                Socioeconomic Information
+              </Typography>
+              <Typography variant='body2' color='text.secondary' className='mb-4'>
+                Optional — employment, lifestyle, and food security factors that support care planning.
+              </Typography>
+              <SocioeconomicFormFields
+                formData={socioForm}
+                onChange={handleSocioChange}
+                fieldErrors={fieldErrors}
               />
             </Grid>
             <Grid item xs={12}>

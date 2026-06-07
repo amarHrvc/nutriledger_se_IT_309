@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
+
+import CustomAvatar from '@core/components/mui/Avatar'
 import Button from '@mui/material/Button'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -27,6 +30,7 @@ import { useConfirm } from '@/hooks/useConfirm'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { notify } from '@/utils/notify'
 import { buildPageQuery, type PaginationMeta, type PaginatedResponse } from '@/types/pagination'
+import { getPatientsNavLabel, PATIENTS_NAV } from '@/utils/patientNav'
 
 type PatientAttributes = {
   firstName: string
@@ -62,11 +66,16 @@ function MyRecordCard({ patient, onView }: { patient: PatientResource; onView: (
 
   return (
     <Card>
+      <CardHeader
+        title={PATIENTS_NAV.patientLabel}
+        avatar={
+          <CustomAvatar skin='light' color='primary' size={38}>
+            <i className={PATIENTS_NAV.icon} />
+          </CustomAvatar>
+        }
+      />
+      <Divider />
       <CardContent className='p-6'>
-        <Typography variant='h5' className='mb-4'>
-          My Record
-        </Typography>
-        <Divider className='mb-4' />
         <div className='flex flex-col gap-3 mb-6'>
           <div>
             <Typography variant='body2' color='text.secondary'>
@@ -229,7 +238,12 @@ export default function PatientsPage() {
       <Card>
         <CardContent>
           <div className='flex justify-between items-center mb-6'>
-            <Typography variant='h5'>Patients</Typography>
+            <div className='flex items-center gap-3'>
+              <CustomAvatar skin='light' color='primary' size={38}>
+                <i className={PATIENTS_NAV.icon} />
+              </CustomAvatar>
+              <Typography variant='h5'>{getPatientsNavLabel(false)}</Typography>
+            </div>
             {isStaff && (
               <Button
                 variant='contained'

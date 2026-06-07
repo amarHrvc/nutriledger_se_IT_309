@@ -21,6 +21,7 @@ import themeConfig from '@configs/themeConfig'
 import { client, ApiError } from '@/api/client'
 import type { UserResource } from '@/api/generated/nutriBaseAPI.schemas'
 import { getInitials } from '@/utils/getInitials'
+import { PATIENTS_NAV } from '@/utils/patientNav'
 
 type PaginatedResponse = {
   data: unknown[]
@@ -272,14 +273,21 @@ export default function HomePage() {
               </>
             )}
             {role === 'pacijent' && (
-              <Button
+              <><Button
+                fullWidth
+                variant='outlined'
+                startIcon={<i className={PATIENTS_NAV.icon} />}
+                onClick={() => router.push('/patients')}
+              >
+                {PATIENTS_NAV.patientLabel}
+              </Button><Button
                 fullWidth
                 variant='contained'
                 startIcon={<i className='tabler-calendar-event' />}
                 onClick={() => router.push('/visits')}
               >
-                My Visits
-              </Button>
+                  My Visits
+                </Button></>
             )}
             <Button
               fullWidth

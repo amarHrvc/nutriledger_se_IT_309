@@ -12,8 +12,11 @@ import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
+import SocioeconomicDetail from '@/components/SocioeconomicDetail'
 import { client, ApiError } from '@/api/client'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { getPatientsNavLabel, PATIENTS_NAV } from '@/utils/patientNav'
+import { getSocioeconomicFromPatient } from '@/utils/socioeconomic'
 
 type PatientAttributes = {
   firstName: string
@@ -39,6 +42,7 @@ type PatientResource = {
   id: string
   attributes: PatientAttributes
   relationships: any
+  included?: { socioeconomic?: { attributes: import('@/utils/socioeconomic').SocioeconomicAttributes } }
 }
 
 type PatientResponse = {
@@ -92,7 +96,7 @@ export default function ViewPatientPage() {
         <CardContent>
           <Alert severity='error'>{error || 'Patient not found'}</Alert>
           <Button variant='outlined' onClick={() => router.push('/patients')} className='mt-4'>
-            {isPatient ? 'Back to My Record' : 'Back to Patients'}
+            {isPatient ? `Back to ${PATIENTS_NAV.patientLabel}` : `Back to ${PATIENTS_NAV.staffLabel}`}
           </Button>
         </CardContent>
       </Card>
@@ -103,7 +107,14 @@ export default function ViewPatientPage() {
     <Card>
       <CardContent>
         <div className='flex justify-between items-center mb-6'>
-          <Typography variant='h5'>{isPatient ? 'My Record' : 'Patient Details'}</Typography>
+          <div className='flex items-center gap-3'>
+            {isPatient && (
+              <i className={`${PATIENTS_NAV.icon} text-2xl text-primary`} />
+            )}
+            <Typography variant='h5'>
+              {isPatient ? getPatientsNavLabel(true) : 'Patient Details'}
+            </Typography>
+          </div>
           <div className='flex gap-2'>
             {!isPatient && (
               <Button
@@ -246,6 +257,15 @@ export default function ViewPatientPage() {
                 <Typography variant='body1'>{patient.attributes.medicalNotes || '-'}</Typography>
               </Grid>
             </Grid>
+          </div>
+
+          <Divider />
+
+          <div>
+            <Typography variant='h6' className='mb-4'>
+              Socioeconomic Information
+            </Typography>
+            <SocioeconomicDetail data={getSocioeconomicFromPatient(patient)} />
           </div>
         </div>
       </CardContent>
